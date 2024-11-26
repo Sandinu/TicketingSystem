@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Data
 @Document(collection = "events")
@@ -23,7 +23,9 @@ public class Event {
     private int customerRetrievalRate; // Rate at which customers retrieve tickets
     private int ticketReleaseRate; // Rate at which vendors add tickets
 
-    private Queue<Ticket> ticketpool = new LinkedList<>(); //Shared ticketpool specific for the event
+    private ConcurrentLinkedQueue<Ticket> ticketpool = new ConcurrentLinkedQueue<>(); //Shared ticketpool specific for the event
+    //thread-safe, non-blocking, FIFO queue that allows multiple threads to safely access and modify it concurrently.
+
     private List<String> vendorId; //list of vendors for each event
     private List<TicketLog> ticketLogs = new ArrayList<>(); //Ticket transaction logs
 

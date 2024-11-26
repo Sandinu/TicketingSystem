@@ -69,6 +69,21 @@ public class EventService {
             throw new RuntimeException("Not enough tickets available!");
         }
 
-        
+        for (int i = 0; i < count; i++){
+            event.getTicketpool().poll();
+        }
+
+        event.setTotalTicketsSold(event.getTotalTicketsSold() + count);
+
+        TicketLog log = new TicketLog();
+        log.setAction("Purchase");
+        log.setVendorId(customerId);
+        log.setTimestamp(new Date());
+        log.setTicketCount(count);
+        event.getTicketLogs().add(log);
+
+        return eventRepo.save(event);
     }
+
+
 }
