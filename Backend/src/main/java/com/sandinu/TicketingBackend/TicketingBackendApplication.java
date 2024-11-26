@@ -9,5 +9,5 @@ public class TicketingBackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TicketingBackendApplication.class, args);
 	}
-
+	
 }
