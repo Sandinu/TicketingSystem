@@ -1,66 +1,90 @@
 package com.example.eventmanagement.controller;
 
-import com.example.eventmanagement.model.Event;
-import com.example.eventmanagement.service.EventService;
+import com.example.eventmanagement.model.Vendor;
+import com.example.eventmanagement.service.VendorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/events")
-public class EventController {
+@RequestMapping("/api/vendors")
+public class VendorController {
 
-    private final EventService eventService;
+    private final VendorService vendorService;
 
-    public EventController(EventService eventService) {
-        this.eventService = eventService;
+    public VendorController(VendorService vendorService) {
+        this.vendorService = vendorService;
     }
 
-    // Create a new event
+    // Create a new vendor
     @PostMapping("/create")
-    public ResponseEntity<Event> createEvent(
-            @RequestParam String name,
-            @RequestParam String description,
-            @RequestParam int maxCapacity,
-            @RequestParam int totalTickets,
-            @RequestParam int customerRetrievalRate,
-            @RequestParam int ticketReleaseRate) {
-        Event event = eventService.createEvent(name, description, maxCapacity, totalTickets, customerRetrievalRate, ticketReleaseRate);
-        return ResponseEntity.ok(event);
+    public ResponseEntity<Vendor> createVendor(@RequestParam String name) {
+        Vendor vendor = new Vendor();
+        vendor.setName(name);
+        return ResponseEntity.ok(vendorService.createVendor(vendor));
     }
 
-    // Get event by ID
-    @GetMapping("/{eventId}")
-    public ResponseEntity<Event> getEvent(@PathVariable String eventId) {
-        Event event = eventService.getEventById(eventId);
-        return ResponseEntity.ok(event);
+    // Associate vendor with an event
+    @PostMapping("/{vendorId}/associate-event")
+    public ResponseEntity<Vendor> associateVendorWithEvent(
+            @PathVariable String vendorId,
+            @RequestParam String eventId) {
+        Vendor vendor = vendorService.associateVendorWithEvent(vendorId, eventId);
+        return ResponseEntity.ok(vendor);
     }
 
-    // Add tickets to an event's pool
-    @PostMapping("/{eventId}/add-tickets")
-    public ResponseEntity<Event> addTickets(
-            @PathVariable String eventId,
-            @RequestParam int count,
-            @RequestParam String vendorId) {
-        Event event = eventService.addTickets(eventId, count, vendorId);
-        return ResponseEntity.ok(event);
-    }
-
-    // Purchase tickets from an event's pool
-    @PostMapping("/{eventId}/purchase-tickets")
-    public ResponseEntity<Event> purchaseTickets(
-            @PathVariable String eventId,
-            @RequestParam int count,
-            @RequestParam String customerId) {
-        Event event = eventService.purchaseTickets(eventId, count, customerId);
-        return ResponseEntity.ok(event);
-    }
-
-    // Get all events
+    // Get all vendors
     @GetMapping
-    public ResponseEntity<List<Event>> getAllEvents() {
-        List<Event> events = eventService.getAllEvents();
-        return ResponseEntity.ok(events);
+    public ResponseEntity<List<Vendor>> getAllVendors() {
+        return ResponseEntity.ok(vendorService.getAllVendors());
+    }
+}
+
+
+
+
+package com.example.eventmanagement.service;
+
+import com.example.eventmanagement.model.Vendor;
+import com.example.eventmanagement.repository.VendorRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class VendorService {
+
+    private final VendorRepository vendorRepository;
+
+    public VendorService(VendorRepository vendorRepository) {
+        this.vendorRepository = vendorRepository;
+    }
+
+    // Create a new vendor
+    public Vendor createVendor(Vendor vendor) {
+        return vendorRepository.save(vendor);
+    }
+
+    // Retrieve a vendor by ID
+    public Vendor getVendorById(String id) {
+        return vendorRepository.findById(id).orElseThrow(() -> new RuntimeException("Vendor not found"));
+    }
+
+    // Associate a vendor with an event
+    public Vendor associateVendorWithEvent(String vendorId, String eventId) {
+        Vendor vendor = getVendorById(vendorId);
+
+        // Add the event ID to the vendor's associated events
+        if (!vendor.getAssociatedEvents().contains(eventId)) {
+            vendor.getAssociatedEvents().add(eventId);
+        }
+
+        return vendorRepository.save(vendor);
+    }
+
+    // Retrieve all vendors
+    public List<Vendor> getAllVendors() {
+        return vendorRepository.findAll();
     }
 }

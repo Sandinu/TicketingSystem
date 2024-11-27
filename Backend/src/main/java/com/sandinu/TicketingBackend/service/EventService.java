@@ -7,6 +7,7 @@ import com.sandinu.TicketingBackend.repo.EventRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class EventService {
@@ -83,6 +84,10 @@ public class EventService {
         event.getTicketLogs().add(log);
 
         return eventRepo.save(event);
+    }
+
+    public List<Event> getAllEvents(){
+        return eventRepo.findAll();
     }
 
 
