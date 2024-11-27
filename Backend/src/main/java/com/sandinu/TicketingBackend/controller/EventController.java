@@ -5,6 +5,8 @@ import com.sandinu.TicketingBackend.service.EventService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/events")
 public class EventController {
@@ -46,4 +48,18 @@ public class EventController {
         return ResponseEntity.ok(event);
     }
 
+    @PostMapping("/{eventId}/purchase-tickets")
+    public ResponseEntity<Event> purchaseTickets(
+            @PathVariable String eventId,
+            @RequestParam int count,
+            @RequestParam String customerId
+    ){
+        Event event = eventService.purchaseTickets(eventId, count, customerId);
+        return ResponseEntity.ok(event);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Event>> getAllEvents(){
+        List<Event> events = eventService
+    }
 }
