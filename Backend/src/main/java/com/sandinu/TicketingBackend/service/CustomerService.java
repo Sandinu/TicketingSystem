@@ -19,6 +19,7 @@ public class CustomerService {
         customer.setName(name);
         customer.setEmail(email);
         customer.setPassword(password);
+        customer.setVip(false);
 
         return customerRepo.save(customer);
     }

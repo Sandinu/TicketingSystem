@@ -1,11 +1,15 @@
 package com.sandinu.TicketingBackend.controller;
 
 import com.sandinu.TicketingBackend.model.Event;
+import com.sandinu.TicketingBackend.service.CustomerTask;
 import com.sandinu.TicketingBackend.service.EventService;
+import com.sandinu.TicketingBackend.service.VendorTask;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @RestController
 @RequestMapping("/api/events")
@@ -35,6 +39,7 @@ public class EventController {
     @GetMapping("/{eventId}")
     public ResponseEntity<Event> getEvent(@PathVariable String eventId){
         Event event = eventService.getEventById(eventId);
+        System.out.println(eventId);
         return ResponseEntity.ok(event);
     }
 
@@ -44,8 +49,13 @@ public class EventController {
             @RequestParam int count,
             @RequestParam String vendorId
     ){
-        Event event = eventService.addTickets(eventId, count, vendorId);
-        return ResponseEntity.ok(event);
+        try {
+            Event event = eventService.addTickets(eventId, count, vendorId);
+            return ResponseEntity.ok(event);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore the interrupt flag
+            return ResponseEntity.status(500).body(null); // Internal Server Error
+        }
     }
 
     @PostMapping("/{eventId}/purchase-tickets")
@@ -54,8 +64,29 @@ public class EventController {
             @RequestParam int count,
             @RequestParam String customerId
     ){
-        Event event = eventService.purchaseTickets(eventId, count, customerId);
-        return ResponseEntity.ok(event);
+        try {
+            Event event = eventService.purchaseTickets(eventId, count, customerId);
+            return ResponseEntity.ok(event);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore the interrupt flag
+            return ResponseEntity.status(500).body(null); // Internal Server Error
+        }
+    }
+
+    @PostMapping("/sim")
+    public ResponseEntity<String> runSimulation(
+            @RequestParam String eventId
+    ){
+        ExecutorService executor = Executors.newFixedThreadPool(100);
+
+        for (int i = 0; i <= 50; i++){
+            executor.submit(new VendorTask(eventService, eventId, "simVendor"+i));
+        }
+        for (int i = 0; i <= 50; i++){
+            executor.submit(new CustomerTask(eventService, eventId, "simCustomer"+i));
+        }
+
+        return ResponseEntity.ok("simulation Done!");
     }
 
     @GetMapping

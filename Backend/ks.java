@@ -1,42 +1,34 @@
 package com.example.eventmanagement.controller;
 
-import com.example.eventmanagement.model.Vendor;
-import com.example.eventmanagement.service.VendorService;
+import com.example.eventmanagement.model.Customer;
+import com.example.eventmanagement.service.CustomerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/vendors")
-public class VendorController {
+@RequestMapping("/api/customers")
+public class CustomerController {
 
-    private final VendorService vendorService;
+    private final CustomerService customerService;
 
-    public VendorController(VendorService vendorService) {
-        this.vendorService = vendorService;
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
     }
 
-    // Create a new vendor
+    // Create a new customer
     @PostMapping("/create")
-    public ResponseEntity<Vendor> createVendor(@RequestParam String name) {
-        Vendor vendor = new Vendor();
-        vendor.setName(name);
-        return ResponseEntity.ok(vendorService.createVendor(vendor));
+    public ResponseEntity<Customer> createCustomer(@RequestParam String name, @RequestParam boolean isVip) {
+        Customer customer = new Customer();
+        customer.setName(name);
+        customer.setVip(isVip);
+        return ResponseEntity.ok(customerService.createCustomer(customer));
     }
 
-    // Associate vendor with an event
-    @PostMapping("/{vendorId}/associate-event")
-    public ResponseEntity<Vendor> associateVendorWithEvent(
-            @PathVariable String vendorId,
-            @RequestParam String eventId) {
-        Vendor vendor = vendorService.associateVendorWithEvent(vendorId, eventId);
-        return ResponseEntity.ok(vendor);
-    }
-
-    // Get all vendors
+    // Get all customers
     @GetMapping
-    public ResponseEntity<List<Vendor>> getAllVendors() {
-        return ResponseEntity.ok(vendorService.getAllVendors());
+    public ResponseEntity<List<Customer>> getAllCustomers() {
+        return ResponseEntity.ok(customerService.getAllCustomers());
     }
 }
