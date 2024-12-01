@@ -14,4 +14,6 @@ public class Vendor {
     private String vendorId;
     private String name;
     private List<String> associatedEvents = new ArrayList<>(); //associated events
+    private String email;
+    private String password;
 }

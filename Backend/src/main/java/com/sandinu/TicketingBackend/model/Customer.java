@@ -11,4 +11,6 @@ public class Customer {
     private String customerId;
     private String name;
     private boolean isVip;
+    private String email;
+    private String password;
 }
