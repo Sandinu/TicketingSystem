@@ -16,15 +16,15 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<Customer> createCustomer(
-            @RequestParam String name,
-            @RequestParam String email,
-            @RequestParam String password
-    ){
-        Customer customer = customerService.createCustomer(name, email, password);
-        return ResponseEntity.ok(customer);
-    }
+//    @PostMapping("/create")
+//    public ResponseEntity<Customer> createCustomer(
+//            @RequestParam String name,
+//            @RequestParam String email,
+//            @RequestParam String password
+//    ){
+//        Customer customer = customerService.createCustomer(name, email, password);
+//        return ResponseEntity.ok(customer);
+//    }
 
     @GetMapping
     public ResponseEntity<List<Customer>> getAllCustomers() {

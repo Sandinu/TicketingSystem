@@ -13,4 +13,6 @@ import java.util.List;
 @Document(collection = "vendors")
 public class Vendor extends User{
     private List<String> associatedEvents = new ArrayList<>(); //associated events
+
+
 }

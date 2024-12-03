@@ -5,6 +5,7 @@ import com.sandinu.TicketingBackend.service.CustomerTask;
 import com.sandinu.TicketingBackend.service.EventService;
 import com.sandinu.TicketingBackend.service.VendorTask;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -48,6 +49,7 @@ public class EventController {
         return ResponseEntity.ok(event);
     }
 
+    @PreAuthorize("hasRole('ROLE_VENDOR')")
     @PostMapping("/{eventId}/add-tickets")
     public ResponseEntity<Event> addTickets(
             @PathVariable String eventId,

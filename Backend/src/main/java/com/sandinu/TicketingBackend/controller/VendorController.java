@@ -16,15 +16,15 @@ public class VendorController {
         this.vendorService = vendorService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<Vendor> createVendor(
-        @RequestParam String name,
-        @RequestParam String email,
-        @RequestParam String password
-    ){
-        Vendor vendor = vendorService.createVendor(name, email, password);
-        return ResponseEntity.ok(vendor);
-    }
+//    @PostMapping("/create")
+//    public ResponseEntity<Vendor> createVendor(
+//        @RequestParam String name,
+//        @RequestParam String email,
+//        @RequestParam String password
+//    ){
+//        Vendor vendor = vendorService.createVendor(name, email, password);
+//        return ResponseEntity.ok(vendor);
+//    }
 
 
     @PostMapping("/{vendorId}/associate-event")
