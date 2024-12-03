@@ -5,6 +5,8 @@ import com.sandinu.TicketingBackend.repo.EventRepo;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -22,7 +24,7 @@ public class EventService {
 
 
 
-    public Event createEvent(String name, String description, int maxCapacity, int totalTickets, int customerRetrievalRate, int ticketReleaseRate) {
+    public Event createEvent(String name, String description, int maxCapacity, int totalTickets, int customerRetrievalRate, int ticketReleaseRate, LocalDate eventDate, LocalTime eventStartTime, String eventLocation){
 //        if (totalTickets > maxCapacity) {
 //            throw new IllegalArgumentException("Total tickets cannot exceed the maximum capacity!");
 //        }
@@ -34,9 +36,13 @@ public class EventService {
         event.setTotalTickets(totalTickets);
         event.setCustomerRetrievalRate(customerRetrievalRate);
         event.setTicketReleaseRate(ticketReleaseRate);
+        event.setEventDate(eventDate);
+        event.setEventStartTime(eventStartTime);
+        event.setEventLocation(eventLocation);
+        //event.getVendorList().add()
 
         return eventRepo.save(event);
-    }
+        }
 
 
 
@@ -56,7 +62,6 @@ public class EventService {
 
         if (event.getTotalTickets() < event.getTotalTicketsAdded() + ticketCount){
             System.out.println("Vendor Limit reached");
-            Thread.currentThread().interrupt();
             return event;
         }
 
@@ -93,7 +98,6 @@ public class EventService {
 
         if (event.getTotalTickets() < event.getTotalTicketsSold() + count){
             System.out.println("Customer Limit reached");
-            Thread.currentThread().interrupt();
             return event;
         }
 

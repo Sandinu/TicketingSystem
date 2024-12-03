@@ -7,6 +7,8 @@ import com.sandinu.TicketingBackend.service.VendorTask;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,10 +30,13 @@ public class EventController {
             @RequestParam int maxCapacity,
             @RequestParam int totalTickets,
             @RequestParam int customerRetrievalRate,
-            @RequestParam int ticketReleaseRate)
+            @RequestParam int ticketReleaseRate,
+            @RequestParam LocalDate eventDate,
+            @RequestParam LocalTime eventStartTime,
+            @RequestParam String eventLocation)
 
             {
-                Event event = eventService.createEvent(name, description, maxCapacity, totalTickets, customerRetrievalRate, ticketReleaseRate);
+                Event event = eventService.createEvent(name, description, maxCapacity, totalTickets, customerRetrievalRate, ticketReleaseRate, eventDate, eventStartTime, eventLocation);
                 return ResponseEntity.ok(event);
             }
 
@@ -86,7 +91,7 @@ public class EventController {
             executor.submit(new CustomerTask(eventService, eventId, "simCustomer"+i));
         }
 
-        return ResponseEntity.ok("simulation Done!");
+            return ResponseEntity.ok("simulation Done!");
     }
 
     @GetMapping
