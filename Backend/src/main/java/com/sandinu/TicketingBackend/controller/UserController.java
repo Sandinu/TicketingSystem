@@ -1,7 +1,9 @@
 package com.sandinu.TicketingBackend.controller;
 
+import com.sandinu.TicketingBackend.config.JwtUtil;
 import com.sandinu.TicketingBackend.model.User;
 import com.sandinu.TicketingBackend.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
