@@ -24,7 +24,7 @@ public class UserService {
     public UserDeets login(String email, String password, HttpSession session){
         Optional<User> user = userRepo.findByEmail(email);
         if (user != null && user.get().getPassword().equals(password)){
-            UserDeets userDeets = new UserDeets(user.get().getName(),email, password, user.get().getRole());
+            UserDeets userDeets = new UserDeets(user.get().getName(),user.get().getUserId(),email, password, user.get().getRole());
 
             Authentication auth = new UsernamePasswordAuthenticationToken(userDeets, null, null);
             SecurityContextHolder.getContext().setAuthentication(auth);
@@ -37,7 +37,7 @@ public class UserService {
     }
 
     public User registerCustomer(String name, String email, String password){
-        if (userRepo.findByEmail(email) != null){
+        if (userRepo.getByEmail(email) != null){
             throw new RuntimeException("Email already registered");
         }
         Customer customer = new Customer();

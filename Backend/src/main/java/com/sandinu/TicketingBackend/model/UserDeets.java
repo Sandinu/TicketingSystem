@@ -9,12 +9,14 @@ import java.util.Collection;
 @Data
 public class UserDeets {
     private String username;
+    private String id;
     private String email;
     private String password;
     private String roles;
 
-    public UserDeets(String username, String email, String password, String roles) {
+    public UserDeets(String username,String id, String email, String password, String roles) {
         this.username = username;
+        this.id = id;
         this.email = email;
         this.password = password;
         this.roles = roles;

@@ -4,6 +4,7 @@ import com.sandinu.TicketingBackend.model.Event;
 import com.sandinu.TicketingBackend.service.CustomerTask;
 import com.sandinu.TicketingBackend.service.EventService;
 import com.sandinu.TicketingBackend.service.VendorTask;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -69,10 +70,10 @@ public class EventController {
     public ResponseEntity<Event> purchaseTickets(
             @PathVariable String eventId,
             @RequestParam int count,
-            @RequestParam String customerId
+            HttpSession session
     ){
         try {
-            Event event = eventService.purchaseTickets(eventId, count, customerId);
+            Event event = eventService.purchaseTickets(eventId, count);
             return ResponseEntity.ok(event);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // Restore the interrupt flag
