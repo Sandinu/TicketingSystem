@@ -28,9 +28,6 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable()) // Disable CSRF for development
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/login", "/api/users/register/vendor", "/api/users/register/customer", "/check-session").permitAll()
-                        .requestMatchers("/api/vendors/**").hasRole("VENDOR")
-                        .requestMatchers("/api/events/**").hasRole("VENDOR")
-                        .requestMatchers("/api/customers/**").hasRole("CUSTOMER")
                         .anyRequest().authenticated() // Require authentication for all other requests
                 );
 

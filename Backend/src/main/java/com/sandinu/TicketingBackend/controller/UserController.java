@@ -28,6 +28,8 @@ public class UserController {
     ){
         User user = userService.login(email, password);
         String token = jwtUtil.generateToken(user.getEmail());
+
+
         return ResponseEntity.ok(token);
     }
 
