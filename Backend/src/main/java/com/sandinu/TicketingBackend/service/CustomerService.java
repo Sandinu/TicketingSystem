@@ -1,6 +1,7 @@
 package com.sandinu.TicketingBackend.service;
 
 import com.sandinu.TicketingBackend.model.Customer;
+import com.sandinu.TicketingBackend.model.Ticket;
 import com.sandinu.TicketingBackend.model.User;
 import com.sandinu.TicketingBackend.repo.CustomerRepo;
 import com.sandinu.TicketingBackend.repo.UserRepo;
@@ -34,6 +35,21 @@ public class CustomerService {
         } else {
             throw new RuntimeException("Customer not found");
         }
+    }
+
+    public Customer getCustomerByEmail(String email){
+        User user = customerRepo.findByEmail(email).orElseThrow(()->new RuntimeException("Customer not found"));
+        if (user instanceof Customer){
+            return (Customer) user;
+        } else {
+            throw new RuntimeException("Customer not found");
+        }
+    }
+
+    public List<Ticket> getTicketHistory(String id){
+        Customer customer = getCustomerById(id);
+
+        return customer.getTicketHistory().stream().toList();
     }
 
     public List<Customer> getAllCustomers() {
