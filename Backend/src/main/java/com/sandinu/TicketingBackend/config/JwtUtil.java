@@ -25,17 +25,9 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Validate the token
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    public boolean validateToken(String token, String email){
+        String username = extractUsername(token);
+        return (username.equals(email) && !isTokenExpired(token));
     }
 
     public String extractUsername(String token){

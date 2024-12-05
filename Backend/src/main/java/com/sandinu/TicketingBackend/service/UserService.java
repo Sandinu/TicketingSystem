@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,17 +21,6 @@ public class UserService {
             return user;
         }
         throw new RuntimeException("Invalid email or password");
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepo.findByEmail(username); // Find user by email (or username)
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
-        }
-
-        // Return a Spring Security User (you can customize roles, permissions, etc. here)
-        return new User(user.getEmail(), user.getPassword(), user.);
     }
 
     public User registerCustomer(String name, String email, String password){
