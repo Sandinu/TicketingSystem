@@ -5,23 +5,41 @@ import com.sandinu.TicketingBackend.model.User;
 import com.sandinu.TicketingBackend.model.Vendor;
 import com.sandinu.TicketingBackend.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     @Autowired
     private UserRepo userRepo;
 
-    public User login(String email, String password){
-        User user = userRepo.findByEmail(email);
-        if (user != null && user.getPassword().equals(password)){
-            return user;
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<User> user = userRepo.findByEmail(email);
+
+        if (user.isPresent()){
+            var userObj = user.get();
+            return org.springframework.security.core.userdetails.User.builder()
+                    .username(userObj.getEmail())
+                    .password(userObj.getPassword())
+                    .roles(userObj.getRole())
+                    .build();
+        }else{
+            throw new UsernameNotFoundException(email);
         }
-        throw new RuntimeException("Invalid email or password");
     }
+
+//    public User login(String email, String password){
+//        Optional<User> user = userRepo.findByEmail(email);
+//        if (user != null && user.getPassword().equals(password)){
+//            return user;
+//        }
+//        throw new RuntimeException("Invalid email or password");
+//    }
 
     public User registerCustomer(String name, String email, String password){
         if (userRepo.findByEmail(email) != null){
