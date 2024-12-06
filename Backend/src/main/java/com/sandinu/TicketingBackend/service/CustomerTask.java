@@ -29,8 +29,14 @@ public class CustomerTask implements Runnable{
         try{
             while (isRunning){
                 lock.lock();{
+                    synchronized (eventService.getPauseLock()){
+                        while (eventService.isPaused()){
+                            eventService.getPauseLock().wait();
+                        }
+                    }
                     if (event.getTotalTicketsSold() >= event.getTotalTickets()) {
                         System.out.println("Ticket limit reached");
+                        Thread.currentThread().interrupt();
                         break;
                     }
                     eventService.purchaseTickets(eventId, random.nextInt(10) + 1, customerId);
@@ -38,7 +44,7 @@ public class CustomerTask implements Runnable{
                 }
             }
         }catch (InterruptedException e){
-            //Thread.currentThread().interrupt();
+            Thread.currentThread().interrupt();
         }finally {
             lock.unlock();
         }
