@@ -1,5 +1,6 @@
 package com.sandinu.TicketingBackend.service;
 
+import com.sandinu.TicketingBackend.controller.EventController;
 import com.sandinu.TicketingBackend.model.Event;
 import org.springframework.scheduling.annotation.Async;
 
@@ -13,6 +14,8 @@ public class CustomerTask implements Runnable{
     private final Random random = new Random();
     private final ReentrantLock lock = new ReentrantLock();
     private final boolean isVip;
+
+    private EventController eventController;
 
     private volatile boolean isRunning = true;
 
@@ -44,9 +47,10 @@ public class CustomerTask implements Runnable{
                     if (event.getTotalTicketsSold() >= event.getTotalTickets()) {
                         System.out.println("Ticket limit reached");
                         Thread.currentThread().interrupt();
+                        eventController.stopSimulation();
                         break;
                     }
-                    eventService.purchaseTickets(eventId, random.nextInt(10) + 1, customerId);
+                    eventService.purchaseTickets(eventId, random.nextInt(5) + 1, customerId);
                     Thread.sleep(event.getCustomerRetrievalRate() * 1000);
                 }
             }
