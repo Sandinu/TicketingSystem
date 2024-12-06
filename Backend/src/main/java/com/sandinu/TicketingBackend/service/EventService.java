@@ -1,13 +1,12 @@
 package com.sandinu.TicketingBackend.service;
 
 import com.sandinu.TicketingBackend.controller.EventController;
+import com.sandinu.TicketingBackend.controller.WebSocketController;
 import com.sandinu.TicketingBackend.model.*;
 import com.sandinu.TicketingBackend.repo.CustomerRepo;
 import com.sandinu.TicketingBackend.repo.EventRepo;
 import com.sandinu.TicketingBackend.repo.UserRepo;
 import lombok.Data;
-import lombok.Synchronized;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +25,7 @@ public class EventService {
     private final CustomerService customerService;
     private final CustomerRepo customerRepo;
     private final UserRepo userRepo;
+    private final WebSocketController webSocketController;
     private EventController eventController;
 
     private final ReentrantLock lock = new ReentrantLock();
@@ -33,11 +33,12 @@ public class EventService {
     private volatile boolean isPaused = false;
 
 
-    public EventService(EventRepo eventRepo, CustomerService customerService, CustomerRepo customerRepo, UserRepo userRepo){
+    public EventService(EventRepo eventRepo, CustomerService customerService, CustomerRepo customerRepo, UserRepo userRepo, WebSocketController webSocketController){
         this.eventRepo = eventRepo;
         this.customerService = customerService;
         this.customerRepo = customerRepo;
         this.userRepo = userRepo;
+        this.webSocketController = webSocketController;
     }
 
 
@@ -104,6 +105,8 @@ public class EventService {
         log.setTicketCount(ticketCount);
         System.out.println(log);
         event.getTicketLogs().add(log);
+
+        webSocketController.sendUpdateToClients(event);
         notifyAll();
 
         return eventRepo.save(event);
@@ -143,6 +146,8 @@ public class EventService {
         log.setTicketCount(count);
         System.out.println(log);
         event.getTicketLogs().add(log);
+
+        webSocketController.sendUpdateToClients(event);
         notifyAll();
 
         return eventRepo.save(event);
