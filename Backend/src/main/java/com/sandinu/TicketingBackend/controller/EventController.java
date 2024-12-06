@@ -1,14 +1,13 @@
 package com.sandinu.TicketingBackend.controller;
 
 import com.sandinu.TicketingBackend.model.Event;
-import com.sandinu.TicketingBackend.service.CustomerTask;
-import com.sandinu.TicketingBackend.service.EventService;
-import com.sandinu.TicketingBackend.service.VendorTask;
+import com.sandinu.TicketingBackend.service.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -21,8 +20,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class EventController {
     private final EventService eventService;
 
-    ExecutorService executor = Executors.newFixedThreadPool(100);
-
+    ExecutorService executor = Executors.newFixedThreadPool(100, new PriorityThreadFactory(Thread.MIN_PRIORITY));
+    ExecutorService VipExecutors;
 
     public EventController(EventService eventService){
         this.eventService = eventService;
@@ -94,10 +93,23 @@ public class EventController {
             executor.submit(new VendorTask(eventService, eventId, "simVendor"+i));
         }
         for (int i = 0; i <= 50; i++){
-            executor.submit(new CustomerTask(eventService, eventId, "simCustomer"+i));
+            executor.submit(new CustomerTask(eventService, eventId, "simCustomer"+i, false));
         }
 
-            return ResponseEntity.ok("simulation Done!");
+            return ResponseEntity.ok("simulation Started!");
+    }
+
+    @PostMapping("/VIP")
+    public ResponseEntity<String> addVipCustomer(
+            @RequestParam String eventId,
+            @RequestParam int count
+    ){
+        VipExecutors = Executors.newFixedThreadPool(count, new PriorityThreadFactory(Thread.MAX_PRIORITY));
+
+        for (int i = 0; i <= count; i++){
+            VipExecutors.submit(new CustomerTask(eventService, eventId, "VIPCustomer"+i, true));
+        }
+        return ResponseEntity.ok("VIP Customers Added!");
     }
 
     @PostMapping("/sim-pause")
@@ -126,9 +138,27 @@ public class EventController {
         return ResponseEntity.ok("Simulation Stopped!");
     }
 
+    @PostMapping("/sim-reset")
+    public ResponseEntity<Event> resetSimulation(
+            @RequestParam String eventId
+    ){
+        Event eve = eventService.resetEvent(eventId);
+        return ResponseEntity.ok(eve);
+    }
+
+    @GetMapping("/ticket-logs")
+    public ResponseEntity<byte[]> downloadTicketLogs(
+            @RequestParam String eventId
+    ){
+        CsvExport csvExport = new CsvExport(eventService);
+        return csvExport.exportToCsv(eventId);
+    }
+
     @GetMapping
     public ResponseEntity<List<Event>> getAllEvents(){
         List<Event> events = eventService.getAllEvents();
         return ResponseEntity.ok(events);
     }
+
+
 }

@@ -12,13 +12,15 @@ public class CustomerTask implements Runnable{
     private final String customerId;
     private final Random random = new Random();
     private final ReentrantLock lock = new ReentrantLock();
+    private final boolean isVip;
 
     private volatile boolean isRunning = true;
 
-    public CustomerTask(EventService eventService, String eventId, String customerId){
+    public CustomerTask(EventService eventService, String eventId, String customerId, boolean isVip){
         this.eventService = eventService;
         this.eventId = eventId;
         this.customerId = customerId;
+        this.isVip = isVip;
     }
 
 
@@ -26,6 +28,11 @@ public class CustomerTask implements Runnable{
     @Async
     public void run(){
         Event event = eventService.getEventById(eventId);
+
+        if (isVip){
+            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+        }
+
         try{
             while (isRunning){
                 lock.lock();{
