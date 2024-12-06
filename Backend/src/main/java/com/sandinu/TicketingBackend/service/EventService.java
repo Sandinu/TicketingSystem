@@ -4,6 +4,8 @@ import com.sandinu.TicketingBackend.model.*;
 import com.sandinu.TicketingBackend.repo.CustomerRepo;
 import com.sandinu.TicketingBackend.repo.EventRepo;
 import com.sandinu.TicketingBackend.repo.UserRepo;
+import lombok.Data;
+import lombok.Synchronized;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,9 @@ import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.locks.ReentrantLock;
 
+@Data
 @Service
 public class EventService {
     private final EventRepo eventRepo;
@@ -21,6 +25,10 @@ public class EventService {
     private final CustomerService customerService;
     private final CustomerRepo customerRepo;
     private final UserRepo userRepo;
+
+    private final ReentrantLock lock = new ReentrantLock();
+    private final Object pauseLock = new Object();
+    private volatile boolean isPaused = false;
 
 
     public EventService(EventRepo eventRepo, CustomerService customerService, CustomerRepo customerRepo, UserRepo userRepo){
@@ -165,6 +173,22 @@ public class EventService {
         return eventRepo.save(event);
     }
 
+    public boolean pauseSimulation(){
+        isPaused = true;
+        System.out.println("System Paused");
+
+        return isPaused;
+    }
+
+    public boolean resumeSimulation(){
+        isPaused = false;
+
+        synchronized (pauseLock){
+            pauseLock.notifyAll();
+        }
+        System.out.println("System Resumed");
+        return isPaused;
+    }
 
     public List<Event> getAllEvents(){
         return eventRepo.findAll();

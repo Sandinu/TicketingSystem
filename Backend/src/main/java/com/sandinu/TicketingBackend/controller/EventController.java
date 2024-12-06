@@ -14,11 +14,15 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.ReentrantLock;
 
 @RestController
 @RequestMapping("/api/events")
 public class EventController {
     private final EventService eventService;
+
+    ExecutorService executor = Executors.newFixedThreadPool(100);
+
 
     public EventController(EventService eventService){
         this.eventService = eventService;
@@ -85,7 +89,6 @@ public class EventController {
     public ResponseEntity<String> runSimulation(
             @RequestParam String eventId
     ){
-        ExecutorService executor = Executors.newFixedThreadPool(100);
 
         for (int i = 0; i <= 50; i++){
             executor.submit(new VendorTask(eventService, eventId, "simVendor"+i));
@@ -95,6 +98,32 @@ public class EventController {
         }
 
             return ResponseEntity.ok("simulation Done!");
+    }
+
+    @PostMapping("/sim-pause")
+    public ResponseEntity<String> pauseSimulation(){
+        if (eventService.isPaused()){
+            return ResponseEntity.status(500).body("Simulation already paused!");
+        }else{
+            eventService.pauseSimulation();
+        }
+        return ResponseEntity.ok("Simulation Paused!");
+    }
+
+    @PostMapping("/sim-resume")
+    public ResponseEntity<String> resumeSimulation(){
+        if (!eventService.isPaused()){
+            return ResponseEntity.status(500).body("Simulation already running!");
+        }else{
+            eventService.resumeSimulation();
+        }
+        return ResponseEntity.ok("Simulation Resumed!");
+    }
+
+    @PostMapping("/sim-stop")
+    public ResponseEntity<String> stopSimulation(){
+        executor.shutdownNow();
+        return ResponseEntity.ok("Simulation Stopped!");
     }
 
     @GetMapping
