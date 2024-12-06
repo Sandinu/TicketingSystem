@@ -190,6 +190,15 @@ public class EventService {
         return isPaused;
     }
 
+    public Event resetEvent(String eventId){
+        Event event = getEventById(eventId);
+        event.setTotalTicketsSold(0);
+        event.setTotalTicketsAdded(0);
+        event.getTicketpool().clear();
+        event.getTicketLogs().clear();
+        return eventRepo.save(event);
+    }
+
     public List<Event> getAllEvents(){
         return eventRepo.findAll();
     }
