@@ -49,7 +49,6 @@ public class EventController {
     @GetMapping("/{eventId}")
     public ResponseEntity<Event> getEvent(@PathVariable String eventId){
         Event event = eventService.getEventById(eventId);
-        System.out.println(eventId);
         return ResponseEntity.ok(event);
     }
 
@@ -135,6 +134,8 @@ public class EventController {
     @PostMapping("/sim-stop")
     public ResponseEntity<String> stopSimulation(){
         executor.shutdownNow();
+        VipExecutors.shutdownNow();
+        System.out.println("Simulation Stopped!");
         return ResponseEntity.ok("Simulation Stopped!");
     }
 

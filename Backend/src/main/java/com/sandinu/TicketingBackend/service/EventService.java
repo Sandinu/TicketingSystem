@@ -1,5 +1,6 @@
 package com.sandinu.TicketingBackend.service;
 
+import com.sandinu.TicketingBackend.controller.EventController;
 import com.sandinu.TicketingBackend.model.*;
 import com.sandinu.TicketingBackend.repo.CustomerRepo;
 import com.sandinu.TicketingBackend.repo.EventRepo;
@@ -25,6 +26,7 @@ public class EventService {
     private final CustomerService customerService;
     private final CustomerRepo customerRepo;
     private final UserRepo userRepo;
+    private EventController eventController;
 
     private final ReentrantLock lock = new ReentrantLock();
     private final Object pauseLock = new Object();
@@ -71,14 +73,19 @@ public class EventService {
     public synchronized Event addTickets(String eventId, int ticketCount, String vendorId) throws InterruptedException{
         Event event = getEventById(eventId);
 
-        while (event.getTicketpool().size() + ticketCount > event.getMaxCapacity() && event.getTotalTickets() > event.getTotalTicketsAdded() + ticketCount){
-            System.out.println("Not enough space to add tickets, Vendor Waiting...");
-            wait();
+        if (event.getTotalTickets() == event.getTotalTicketsAdded()){
+            Thread.currentThread().interrupt();
+            return event;
         }
 
         if (event.getTotalTickets() < event.getTotalTicketsAdded() + ticketCount){
             System.out.println("Vendor Limit reached");
             return event;
+        }
+
+        while (event.getTicketpool().size() + ticketCount > event.getMaxCapacity() && event.getTotalTickets() > event.getTotalTicketsAdded() + ticketCount){
+            System.out.println("Not enough space to add tickets, Vendor Waiting...");
+            wait();
         }
 
         for (int i=0; i < ticketCount; i++){
@@ -107,14 +114,20 @@ public class EventService {
     public synchronized Event purchaseTickets(String eventId, int count, String customerId) throws InterruptedException{
         Event event = getEventById(eventId);
 
-        while (event.getTicketpool().size() < count && event.getTotalTickets() > event.getTotalTicketsSold() + count){
-            System.out.println("No tickets available! Customer waiting...");
-            wait();
+        if (event.getTotalTickets() == event.getTotalTicketsSold()){
+            Thread.currentThread().interrupt();
+            eventController.stopSimulation();
+            return event;
         }
 
         if (event.getTotalTickets() < event.getTotalTicketsSold() + count){
             System.out.println("Customer Limit reached");
             return event;
+        }
+
+        while (event.getTicketpool().size() < count && event.getTotalTickets() > event.getTotalTicketsSold() + count){
+            System.out.println("No tickets available! " +customerId+ " waiting...");
+            wait();
         }
 
         for (int i = 0; i < count; i++){
@@ -125,7 +138,7 @@ public class EventService {
 
         TicketLog log = new TicketLog();
         log.setAction("Purchase");
-        log.setVendorId(customerId);
+        log.setCustomerId(customerId);
         log.setTimestamp(new Date());
         log.setTicketCount(count);
         System.out.println(log);
@@ -163,7 +176,7 @@ public class EventService {
 
         TicketLog log = new TicketLog();
         log.setAction("Purchase");
-        log.setVendorId(customer.getUserId());
+        log.setCustomerId(customer.getUserId());
         log.setTimestamp(new Date());
         log.setTicketCount(count);
         System.out.println(log);
