@@ -28,6 +28,7 @@ public class SecurityConfig{
         http.csrf().disable() // Disable CSRF protection
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
+                                .requestMatchers("/ws/**").permitAll()
                                 .anyRequest().permitAll() // Allow all requests without authentication
                 );  // Allow all endpoints without authentication
         return http.build();

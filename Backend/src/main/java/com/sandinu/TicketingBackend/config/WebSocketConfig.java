@@ -1,23 +1,38 @@
 package com.sandinu.TicketingBackend.config;
 
+import com.sandinu.TicketingBackend.service.EventWebSocketHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
-import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.*;
 
 @Configuration
-@EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+@EnableWebSocket
+public class WebSocketConfig implements WebSocketConfigurer {
 
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry config){
-        config.enableSimpleBroker("/topic"); // Enable a simple broker to handle messages
-        config.setApplicationDestinationPrefixes("/app");  // Prefix for sending messages
+    private final EventWebSocketHandler eventWebSocketHandler;
+
+    public WebSocketConfig(EventWebSocketHandler eventWebSocketHandler) {
+        this.eventWebSocketHandler = eventWebSocketHandler;
     }
 
     @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry){
-        registry.addEndpoint("/ws").withSockJS();  // Register a websocket endpoint
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(eventWebSocketHandler, "/ws" ).setAllowedOrigins("*");
     }
 }
+
+//@Configuration
+//@EnableWebSocketMessageBroker
+//public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+//
+//    @Override
+//    public void registerStompEndpoints(StompEndpointRegistry registry) {
+//        registry.addEndpoint("/ws").setAllowedOrigins("*").withSockJS();
+//    }
+//
+//    @Override
+//    public void configureMessageBroker(MessageBrokerRegistry registry) {
+//        registry.setApplicationDestinationPrefixes("/app");
+//        registry.enableSimpleBroker("/topic");
+//    }
+//}

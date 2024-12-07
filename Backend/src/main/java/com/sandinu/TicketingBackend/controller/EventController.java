@@ -134,7 +134,9 @@ public class EventController {
     @PostMapping("/sim-stop")
     public ResponseEntity<String> stopSimulation(){
         executor.shutdownNow();
-        VipExecutors.shutdownNow();
+        if (VipExecutors != null){
+            VipExecutors.shutdownNow();
+        }
         System.out.println("Simulation Stopped!");
         return ResponseEntity.ok("Simulation Stopped!");
     }

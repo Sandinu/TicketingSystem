@@ -7,6 +7,7 @@ import com.sandinu.TicketingBackend.repo.CustomerRepo;
 import com.sandinu.TicketingBackend.repo.EventRepo;
 import com.sandinu.TicketingBackend.repo.UserRepo;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -25,20 +26,20 @@ public class EventService {
     private final CustomerService customerService;
     private final CustomerRepo customerRepo;
     private final UserRepo userRepo;
-    private final WebSocketController webSocketController;
     private EventController eventController;
 
     private final ReentrantLock lock = new ReentrantLock();
     private final Object pauseLock = new Object();
     private volatile boolean isPaused = false;
 
+    @Autowired
+    private EventWebSocketHandler eventWebSocketHandler;
 
     public EventService(EventRepo eventRepo, CustomerService customerService, CustomerRepo customerRepo, UserRepo userRepo, WebSocketController webSocketController){
         this.eventRepo = eventRepo;
         this.customerService = customerService;
         this.customerRepo = customerRepo;
         this.userRepo = userRepo;
-        this.webSocketController = webSocketController;
     }
 
 
@@ -97,6 +98,8 @@ public class EventService {
         }
 
         event.setTotalTicketsAdded(event.getTotalTicketsAdded() + ticketCount);
+        eventWebSocketHandler.sendEventUpdate(eventId, event.getTotalTicketsAdded(), event.getTotalTicketsSold());
+
 
         TicketLog log = new TicketLog();
         log.setAction("Add");
@@ -106,7 +109,7 @@ public class EventService {
         System.out.println(log);
         event.getTicketLogs().add(log);
 
-        webSocketController.sendUpdateToClients(event);
+        //webSocketController.sendUpdateToClients(event);
         notifyAll();
 
         return eventRepo.save(event);
@@ -138,6 +141,7 @@ public class EventService {
         }
 
         event.setTotalTicketsSold(event.getTotalTicketsSold() + count);
+        eventWebSocketHandler.sendEventUpdate(eventId, event.getTotalTicketsAdded(), event.getTotalTicketsSold());
 
         TicketLog log = new TicketLog();
         log.setAction("Purchase");
@@ -147,7 +151,7 @@ public class EventService {
         System.out.println(log);
         event.getTicketLogs().add(log);
 
-        webSocketController.sendUpdateToClients(event);
+
         notifyAll();
 
         return eventRepo.save(event);
