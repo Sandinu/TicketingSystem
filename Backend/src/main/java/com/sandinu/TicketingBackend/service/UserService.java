@@ -36,6 +36,7 @@ public class UserService {
         throw new RuntimeException("Invalid email or password");
     }
 
+
     public User registerCustomer(String name, String email, String password){
         if (userRepo.getByEmail(email) != null){
             throw new RuntimeException("Email already registered");
@@ -51,7 +52,7 @@ public class UserService {
     }
 
     public User registerVendor(String name, String email, String password){
-        if (userRepo.findByEmail(email) != null){
+        if (userRepo.findByEmail(email).isPresent()){
             throw new RuntimeException("Email already registered");
         }
         Vendor vendor = new Vendor();

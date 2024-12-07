@@ -35,6 +35,11 @@ public class EventService {
     @Autowired
     private EventWebSocketHandler eventWebSocketHandler;
 
+    @Autowired
+    private TicketLogWebSocketHandler ticketLogWebSocketHandler;
+    @Autowired
+    private VendorService vendorService;
+
     public EventService(EventRepo eventRepo, CustomerService customerService, CustomerRepo customerRepo, UserRepo userRepo, WebSocketController webSocketController){
         this.eventRepo = eventRepo;
         this.customerService = customerService;
@@ -48,6 +53,14 @@ public class EventService {
 //        if (totalTickets > maxCapacity) {
 //            throw new IllegalArgumentException("Total tickets cannot exceed the maximum capacity!");
 //        }
+        Vendor vendor;
+        UserDeets userDeets = (UserDeets) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (userDeets.getRoles().equals("ROLE_VENDOR")){
+            vendor = vendorService.findVendorById(userDeets.getId());
+        }else {
+            throw new RuntimeException("Only vendors can create events");
+        }
 
         Event event = new Event();
         event.setEventName(name);
@@ -59,9 +72,13 @@ public class EventService {
         event.setEventDate(eventDate);
         event.setEventStartTime(eventStartTime);
         event.setEventLocation(eventLocation);
-        //event.getVendorList().add()
+        event.getVendorId().add(vendor);
 
-        return eventRepo.save(event);
+        Event eventSaved = eventRepo.save(event);
+
+        vendorService.addCollaboratedEvents(vendor.getUserId(), eventSaved.getEventId());
+
+        return eventSaved;
         }
 
 
@@ -82,11 +99,17 @@ public class EventService {
 
         if (event.getTotalTickets() < event.getTotalTicketsAdded() + ticketCount){
             System.out.println("Vendor Limit reached");
+            ticketLogWebSocketHandler.sendTicketLog("Vendor Limit reached");
             return event;
         }
 
         while (event.getTicketpool().size() + ticketCount > event.getMaxCapacity() && event.getTotalTickets() > event.getTotalTicketsAdded() + ticketCount){
-            System.out.println("Not enough space to add tickets, Vendor Waiting...");
+            if (Thread.currentThread().isInterrupted()) {
+                System.out.println("Simulation stopped, exiting wait loop.");
+                return event;
+            }
+            System.out.println("Not enough space to add tickets, " +vendorId+ "Waiting...");
+            ticketLogWebSocketHandler.sendTicketLog("Not enough space to add tickets, " +vendorId+ "Waiting...");
             wait();
         }
 
@@ -108,6 +131,7 @@ public class EventService {
         log.setTicketCount(ticketCount);
         System.out.println(log);
         event.getTicketLogs().add(log);
+        ticketLogWebSocketHandler.sendTicketLog(log.toString());
 
         //webSocketController.sendUpdateToClients(event);
         notifyAll();
@@ -128,11 +152,17 @@ public class EventService {
 
         if (event.getTotalTickets() < event.getTotalTicketsSold() + count){
             System.out.println("Customer Limit reached");
+            ticketLogWebSocketHandler.sendTicketLog("Customer Limit reached");
             return event;
         }
 
         while (event.getTicketpool().size() < count && event.getTotalTickets() > event.getTotalTicketsSold() + count){
+            if (Thread.currentThread().isInterrupted()) {
+                System.out.println("Simulation stopped, exiting wait loop.");
+                return event;
+            }
             System.out.println("No tickets available! " +customerId+ " waiting...");
+            ticketLogWebSocketHandler.sendTicketLog("No tickets available! " +customerId+ " waiting...");
             wait();
         }
 
@@ -149,8 +179,9 @@ public class EventService {
         log.setTimestamp(new Date());
         log.setTicketCount(count);
         System.out.println(log);
-        event.getTicketLogs().add(log);
 
+        event.getTicketLogs().add(log);
+        ticketLogWebSocketHandler.sendTicketLog(log.toString());
 
         notifyAll();
 

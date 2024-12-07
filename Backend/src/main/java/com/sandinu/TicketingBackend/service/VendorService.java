@@ -1,5 +1,6 @@
 package com.sandinu.TicketingBackend.service;
 
+import com.sandinu.TicketingBackend.model.Customer;
 import com.sandinu.TicketingBackend.model.User;
 import com.sandinu.TicketingBackend.model.Vendor;
 import com.sandinu.TicketingBackend.repo.UserRepo;
@@ -46,7 +47,18 @@ public class VendorService {
             vendor.getAssociatedEvents().add(eventId);
         }
 
-        return (Vendor) vendorRepo.save(vendor);
+        vendorRepo.save(vendor);
+        return vendor;
+    }
+
+    public Vendor findVendorById(String vendorId){
+        User user = vendorRepo.findById(vendorId).orElseThrow(()->new RuntimeException("Vendor not found"));
+
+        if (user instanceof Vendor){
+            return (Vendor) user;
+        } else {
+            throw new RuntimeException("Vendor not found");
+        }
     }
 
     //Get all vendors

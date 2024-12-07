@@ -1,5 +1,6 @@
 package com.sandinu.TicketingBackend.service;
 
+import com.sandinu.TicketingBackend.model.TicketLog;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -10,7 +11,7 @@ import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
-public class EventWebSocketHandler extends TextWebSocketHandler {
+public class TicketLogWebSocketHandler extends TextWebSocketHandler {
     private final CopyOnWriteArrayList<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
 
     @Override
@@ -23,8 +24,8 @@ public class EventWebSocketHandler extends TextWebSocketHandler {
         sessions.remove(session);
     }
 
-    public void sendEventUpdate(String eventId, int totalTicketsAdded, int totalTicketsSold) {
-        String message = String.format("{\"eventId\":\"%s\", \"totalTicketsAdded\":%d, \"totalTicketsSold\":%d}", eventId, totalTicketsAdded, totalTicketsSold);
+    public void sendTicketLog(String ticketLog) {
+        String message = String.format(ticketLog);
         for (WebSocketSession session : sessions) {
             try {
                 session.sendMessage(new TextMessage(message));

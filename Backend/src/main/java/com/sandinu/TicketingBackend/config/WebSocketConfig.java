@@ -1,6 +1,7 @@
 package com.sandinu.TicketingBackend.config;
 
 import com.sandinu.TicketingBackend.service.EventWebSocketHandler;
+import com.sandinu.TicketingBackend.service.TicketLogWebSocketHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
@@ -10,14 +11,17 @@ import org.springframework.web.socket.config.annotation.*;
 public class WebSocketConfig implements WebSocketConfigurer {
 
     private final EventWebSocketHandler eventWebSocketHandler;
+    private final TicketLogWebSocketHandler ticketLogWebSocketHandler;
 
-    public WebSocketConfig(EventWebSocketHandler eventWebSocketHandler) {
+    public WebSocketConfig(EventWebSocketHandler eventWebSocketHandler, TicketLogWebSocketHandler ticketLogWebSocketHandler) {
         this.eventWebSocketHandler = eventWebSocketHandler;
+        this.ticketLogWebSocketHandler = ticketLogWebSocketHandler;
     }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(eventWebSocketHandler, "/ws" ).setAllowedOrigins("*");
+        registry.addHandler(eventWebSocketHandler, "/ws/event-stats" ).setAllowedOrigins("*");
+        registry.addHandler(ticketLogWebSocketHandler, "/ws/event-ticketlogs" ).setAllowedOrigins("*");
     }
 }
 
