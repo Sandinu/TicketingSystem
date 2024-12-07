@@ -256,5 +256,45 @@ public class EventService {
         return eventRepo.findAll();
     }
 
+    public Event updateTicketReleaseRate(String eventId, int ticketReleaseRate){
+        Event event = getEventById(eventId);
+        event.setTicketReleaseRate(ticketReleaseRate);
+        return eventRepo.save(event);
+    }
 
+    public Event updateCustomerRetrievalRate(String eventId, int customerRetrievalRate){
+        Event event = getEventById(eventId);
+        event.setCustomerRetrievalRate(customerRetrievalRate);
+        return eventRepo.save(event);
+    }
+
+    public Event updateEventDate(String eventId, LocalDate eventDate){
+        Event event = getEventById(eventId);
+        event.setEventDate(eventDate);
+        return eventRepo.save(event);
+    }
+
+    public Event updateEventStartTime(String eventId, LocalTime eventStartTime){
+        Event event = getEventById(eventId);
+        event.setEventStartTime(eventStartTime);
+        return eventRepo.save(event);
+    }
+
+    public Event updateEventLocation(String eventId, String eventLocation){
+        Event event = getEventById(eventId);
+        event.setEventLocation(eventLocation);
+        return eventRepo.save(event);
+    }
+
+    public Event updateEventDescription(String eventId, String eventDescription){
+        Event event = getEventById(eventId);
+        event.setEventDescription(eventDescription);
+        return eventRepo.save(event);
+    }
+
+    public Event updateTotalTickets(String eventId, int totalTickets){
+        Event event = getEventById(eventId);
+        event.setTotalTickets(totalTickets);
+        return eventRepo.save(event);
+    }
 }
