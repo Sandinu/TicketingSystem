@@ -88,6 +88,10 @@ public class EventController {
             @RequestParam String eventId
     ){
 
+        if (executor.isShutdown()) {
+            executor = Executors.newFixedThreadPool(100, new PriorityThreadFactory(Thread.MIN_PRIORITY));
+        }
+
         for (int i = 0; i <= 50; i++){
             executor.submit(new VendorTask(eventService, eventId, "simVendor"+i));
         }
@@ -134,8 +138,11 @@ public class EventController {
     @PostMapping("/sim-stop")
     public ResponseEntity<String> stopSimulation(){
         executor.shutdownNow();
-        VipExecutors.shutdownNow();
+        if (VipExecutors != null){
+            VipExecutors.shutdownNow();
+        }
         System.out.println("Simulation Stopped!");
+
         return ResponseEntity.ok("Simulation Stopped!");
     }
 
@@ -145,6 +152,11 @@ public class EventController {
     ){
         Event eve = eventService.resetEvent(eventId);
         return ResponseEntity.ok(eve);
+    }
+
+    @GetMapping("/threads")
+    public ResponseEntity<Integer> getThreadCount(){
+        return ResponseEntity.ok(Thread.activeCount());
     }
 
     @GetMapping("/ticket-logs")

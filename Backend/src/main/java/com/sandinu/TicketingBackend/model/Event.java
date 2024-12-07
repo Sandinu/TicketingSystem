@@ -33,7 +33,7 @@ public class Event {
     private ConcurrentLinkedQueue<Ticket> ticketpool = new ConcurrentLinkedQueue<>(); //Shared ticketpool specific for the event
     //thread-safe, non-blocking, FIFO queue that allows multiple threads to safely access and modify it concurrently.
 
-    private List<String> vendorId; //list of vendors for each event
+    private List<Vendor> vendorId = new ArrayList<>(); //list of vendors for each event
     private List<TicketLog> ticketLogs = new ArrayList<>(); //Ticket transaction logs
 
     private boolean isSoldOut(){

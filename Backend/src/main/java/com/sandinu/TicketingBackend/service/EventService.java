@@ -1,13 +1,13 @@
 package com.sandinu.TicketingBackend.service;
 
 import com.sandinu.TicketingBackend.controller.EventController;
+import com.sandinu.TicketingBackend.controller.WebSocketController;
 import com.sandinu.TicketingBackend.model.*;
 import com.sandinu.TicketingBackend.repo.CustomerRepo;
 import com.sandinu.TicketingBackend.repo.EventRepo;
 import com.sandinu.TicketingBackend.repo.UserRepo;
 import lombok.Data;
-import lombok.Synchronized;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -32,8 +32,15 @@ public class EventService {
     private final Object pauseLock = new Object();
     private volatile boolean isPaused = false;
 
+    @Autowired
+    private EventWebSocketHandler eventWebSocketHandler;
 
-    public EventService(EventRepo eventRepo, CustomerService customerService, CustomerRepo customerRepo, UserRepo userRepo){
+    @Autowired
+    private TicketLogWebSocketHandler ticketLogWebSocketHandler;
+    @Autowired
+    private VendorService vendorService;
+
+    public EventService(EventRepo eventRepo, CustomerService customerService, CustomerRepo customerRepo, UserRepo userRepo, WebSocketController webSocketController){
         this.eventRepo = eventRepo;
         this.customerService = customerService;
         this.customerRepo = customerRepo;
@@ -46,6 +53,14 @@ public class EventService {
 //        if (totalTickets > maxCapacity) {
 //            throw new IllegalArgumentException("Total tickets cannot exceed the maximum capacity!");
 //        }
+        Vendor vendor;
+        UserDeets userDeets = (UserDeets) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (userDeets.getRoles().equals("ROLE_VENDOR")){
+            vendor = vendorService.findVendorById(userDeets.getId());
+        }else {
+            throw new RuntimeException("Only vendors can create events");
+        }
 
         Event event = new Event();
         event.setEventName(name);
@@ -57,9 +72,13 @@ public class EventService {
         event.setEventDate(eventDate);
         event.setEventStartTime(eventStartTime);
         event.setEventLocation(eventLocation);
-        //event.getVendorList().add()
+        event.getVendorId().add(vendor);
 
-        return eventRepo.save(event);
+        Event eventSaved = eventRepo.save(event);
+
+        vendorService.addCollaboratedEvents(vendor.getUserId(), eventSaved.getEventId());
+
+        return eventSaved;
         }
 
 
@@ -80,11 +99,17 @@ public class EventService {
 
         if (event.getTotalTickets() < event.getTotalTicketsAdded() + ticketCount){
             System.out.println("Vendor Limit reached");
+            ticketLogWebSocketHandler.sendTicketLog("Vendor Limit reached");
             return event;
         }
 
         while (event.getTicketpool().size() + ticketCount > event.getMaxCapacity() && event.getTotalTickets() > event.getTotalTicketsAdded() + ticketCount){
-            System.out.println("Not enough space to add tickets, Vendor Waiting...");
+            if (Thread.currentThread().isInterrupted()) {
+                System.out.println("Simulation stopped, exiting wait loop.");
+                return event;
+            }
+            System.out.println("Not enough space to add tickets, " +vendorId+ "Waiting...");
+            ticketLogWebSocketHandler.sendTicketLog("Not enough space to add tickets, " +vendorId+ "Waiting...");
             wait();
         }
 
@@ -96,6 +121,8 @@ public class EventService {
         }
 
         event.setTotalTicketsAdded(event.getTotalTicketsAdded() + ticketCount);
+        eventWebSocketHandler.sendEventUpdate(eventId, event.getTotalTicketsAdded(), event.getTotalTicketsSold());
+
 
         TicketLog log = new TicketLog();
         log.setAction("Add");
@@ -104,6 +131,9 @@ public class EventService {
         log.setTicketCount(ticketCount);
         System.out.println(log);
         event.getTicketLogs().add(log);
+        ticketLogWebSocketHandler.sendTicketLog(log.toString());
+
+        //webSocketController.sendUpdateToClients(event);
         notifyAll();
 
         return eventRepo.save(event);
@@ -122,11 +152,17 @@ public class EventService {
 
         if (event.getTotalTickets() < event.getTotalTicketsSold() + count){
             System.out.println("Customer Limit reached");
+            ticketLogWebSocketHandler.sendTicketLog("Customer Limit reached");
             return event;
         }
 
         while (event.getTicketpool().size() < count && event.getTotalTickets() > event.getTotalTicketsSold() + count){
+            if (Thread.currentThread().isInterrupted()) {
+                System.out.println("Simulation stopped, exiting wait loop.");
+                return event;
+            }
             System.out.println("No tickets available! " +customerId+ " waiting...");
+            ticketLogWebSocketHandler.sendTicketLog("No tickets available! " +customerId+ " waiting...");
             wait();
         }
 
@@ -135,6 +171,7 @@ public class EventService {
         }
 
         event.setTotalTicketsSold(event.getTotalTicketsSold() + count);
+        eventWebSocketHandler.sendEventUpdate(eventId, event.getTotalTicketsAdded(), event.getTotalTicketsSold());
 
         TicketLog log = new TicketLog();
         log.setAction("Purchase");
@@ -142,7 +179,10 @@ public class EventService {
         log.setTimestamp(new Date());
         log.setTicketCount(count);
         System.out.println(log);
+
         event.getTicketLogs().add(log);
+        ticketLogWebSocketHandler.sendTicketLog(log.toString());
+
         notifyAll();
 
         return eventRepo.save(event);

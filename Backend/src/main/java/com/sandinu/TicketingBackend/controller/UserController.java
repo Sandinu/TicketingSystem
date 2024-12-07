@@ -29,9 +29,13 @@ public class UserController {
             @RequestParam String password,
             HttpSession httpSession){
         UserDeets user = userService.login(email, password, httpSession);
-        UserDeets ux = (UserDeets) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(ux);
         return ResponseEntity.ok(user.getEmail());
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpSession httpSession){
+        httpSession.invalidate();
+        return ResponseEntity.ok("Logged out successfully!");
     }
 
     @PostMapping("/register/customer")
