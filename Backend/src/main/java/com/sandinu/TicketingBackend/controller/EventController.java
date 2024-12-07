@@ -173,5 +173,66 @@ public class EventController {
         return ResponseEntity.ok(events);
     }
 
+    @PostMapping("/release-rate-update")
+    public ResponseEntity<Event> updateReleaseRate(
+            @RequestParam String eventId,
+            @RequestParam int releaseRate
+    ){
+        Event event = eventService.updateTicketReleaseRate(eventId, releaseRate);
+        return ResponseEntity.ok(event);
+    }
 
+    @PostMapping("/retrieval-rate-update")
+    public ResponseEntity<Event> updateRetrievalRate(
+            @RequestParam String eventId,
+            @RequestParam int retrievalRate
+    ){
+        Event event = eventService.updateCustomerRetrievalRate(eventId, retrievalRate);
+        return ResponseEntity.ok(event);
+    }
+
+    @PostMapping("/total-tickets-update")
+    public ResponseEntity<Event> updateTotalTickets(
+            @RequestParam String eventId,
+            @RequestParam int totalTickets
+    ){
+        Event event = eventService.updateTotalTickets(eventId, totalTickets);
+        return ResponseEntity.ok(event);
+    }
+
+    @PostMapping("/date-update")
+    public ResponseEntity<Event> updateEventDate(
+            @RequestParam String eventId,
+            @RequestParam LocalDate eventDate
+    ){
+        Event event = eventService.updateEventDate(eventId, eventDate);
+        return ResponseEntity.ok(event);
+    }
+
+    @PostMapping("/start-time-update")
+    public ResponseEntity<Event> updateEventStartTime(
+            @RequestParam String eventId,
+            @RequestParam LocalTime eventStartTime
+    ){
+        Event event = eventService.updateEventStartTime(eventId, eventStartTime);
+        return ResponseEntity.ok(event);
+    }
+
+    @PostMapping("/location-update")
+    public ResponseEntity<Event> updateEventLocation(
+            @RequestParam String eventId,
+            @RequestParam String eventLocation
+    ){
+        Event event = eventService.updateEventLocation(eventId, eventLocation);
+        return ResponseEntity.ok(event);
+    }
+
+    @PostMapping("/description-update")
+    public ResponseEntity<Event> updateEventDescription(
+            @RequestParam String eventId,
+            @RequestParam String description
+    ){
+        Event event = eventService.updateEventDescription(eventId, description);
+        return ResponseEntity.ok(event);
+    }
 }
