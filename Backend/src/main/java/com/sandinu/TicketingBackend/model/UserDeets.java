@@ -1,5 +1,6 @@
 package com.sandinu.TicketingBackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,5 +27,14 @@ public class UserDeets {
         return (UserDeets) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
+    public String toString() {
+        return "UserDeets{" +
+                "username='" + username + '\'' +
+                ", id='" + id + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", roles='" + roles + '\'' +
+                '}';
+    }
 
 }

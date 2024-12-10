@@ -1,7 +1,11 @@
 package com.sandinu.TicketingBackend.controller;
 
+import com.sandinu.TicketingBackend.DTO.AddTicketDTO;
+import com.sandinu.TicketingBackend.DTO.UserEventId;
+import com.sandinu.TicketingBackend.DTO.VipCustomerDTO;
 import com.sandinu.TicketingBackend.model.Event;
 import com.sandinu.TicketingBackend.service.*;
+import com.sun.java.accessibility.util.EventID;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,15 +56,13 @@ public class EventController {
         return ResponseEntity.ok(event);
     }
 
-    @PreAuthorize("hasRole('ROLE_VENDOR')")
     @PostMapping("/{eventId}/add-tickets")
     public ResponseEntity<Event> addTickets(
             @PathVariable String eventId,
-            @RequestParam int count,
-            @RequestParam String vendorId
-    ){
+            @RequestBody AddTicketDTO addTicketDTO
+            ){
         try {
-            Event event = eventService.addTickets(eventId, count, vendorId);
+            Event event = eventService.addTickets(eventId, addTicketDTO.getTicketCount(), addTicketDTO.getVendorId());
             return ResponseEntity.ok(event);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // Restore the interrupt flag
@@ -85,7 +87,7 @@ public class EventController {
 
     @PostMapping("/sim")
     public ResponseEntity<String> runSimulation(
-            @RequestParam String eventId
+            @RequestBody String eventId
     ){
 
         if (executor.isShutdown()) {
@@ -102,15 +104,14 @@ public class EventController {
             return ResponseEntity.ok("simulation Started!");
     }
 
-    @PostMapping("/VIP")
+    @PostMapping("/vip")
     public ResponseEntity<String> addVipCustomer(
-            @RequestParam String eventId,
-            @RequestParam int count
-    ){
-        VipExecutors = Executors.newFixedThreadPool(count, new PriorityThreadFactory(Thread.MAX_PRIORITY));
+            @RequestBody VipCustomerDTO vipCustomerDTO
+            ){
+        VipExecutors = Executors.newFixedThreadPool(vipCustomerDTO.getCount(), new PriorityThreadFactory(Thread.MAX_PRIORITY));
 
-        for (int i = 0; i <= count; i++){
-            VipExecutors.submit(new CustomerTask(eventService, eventId, "VIPCustomer"+i, true));
+        for (int i = 0; i <= vipCustomerDTO.getCount(); i++){
+            VipExecutors.submit(new CustomerTask(eventService, vipCustomerDTO.getEventId(), "VIPCustomer"+i, true));
         }
         return ResponseEntity.ok("VIP Customers Added!");
     }
@@ -147,11 +148,13 @@ public class EventController {
     }
 
     @PostMapping("/sim-reset")
-    public ResponseEntity<Event> resetSimulation(
-            @RequestParam String eventId
-    ){
-        Event eve = eventService.resetEvent(eventId);
-        return ResponseEntity.ok(eve);
+    public ResponseEntity<?> resetEvent(@RequestBody UserEventId userEventId){
+        try {
+            Event eve = eventService.resetEvent(userEventId.getEventId());
+            return ResponseEntity.ok(eve);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body("Event not found");
+        }
     }
 
     @GetMapping("/threads")
@@ -159,12 +162,10 @@ public class EventController {
         return ResponseEntity.ok(Thread.activeCount());
     }
 
-    @GetMapping("/ticket-logs")
-    public ResponseEntity<byte[]> downloadTicketLogs(
-            @RequestParam String eventId
-    ){
+    @PostMapping("/ticket-logs")
+    public ResponseEntity<byte[]> downloadTicketLogs(@RequestBody UserEventId userEventId ){
         CsvExport csvExport = new CsvExport(eventService);
-        return csvExport.exportToCsv(eventId);
+        return csvExport.exportToCsv(userEventId.getEventId());
     }
 
     @GetMapping

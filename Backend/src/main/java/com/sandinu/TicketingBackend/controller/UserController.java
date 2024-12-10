@@ -1,5 +1,6 @@
 package com.sandinu.TicketingBackend.controller;
 
+import com.sandinu.TicketingBackend.DTO.LoginData;
 import com.sandinu.TicketingBackend.model.User;
 import com.sandinu.TicketingBackend.model.UserDeets;
 import com.sandinu.TicketingBackend.service.UserService;
@@ -8,15 +9,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/users")
 public class UserController {
 
@@ -25,10 +24,10 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(
-            @RequestParam String email,
-            @RequestParam String password,
+           @RequestBody LoginData loginData,
             HttpSession httpSession){
-        UserDeets user = userService.login(email, password, httpSession);
+        UserDeets user = userService.login(loginData.getEmail(), loginData.getPassword(), httpSession);
+        System.out.println(loginData.getEmail());
         return ResponseEntity.ok(user.getEmail());
     }
 

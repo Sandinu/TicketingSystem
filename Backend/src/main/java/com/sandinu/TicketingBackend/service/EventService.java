@@ -129,6 +129,8 @@ public class EventService {
         log.setVendorId(vendorId);
         log.setTimestamp(new Date());
         log.setTicketCount(ticketCount);
+        log.setTotalTicketsAdded(event.getTotalTicketsAdded());
+        log.setTotalTicketsSold(event.getTotalTicketsSold());
         System.out.println(log);
         event.getTicketLogs().add(log);
         ticketLogWebSocketHandler.sendTicketLog(log.toString());
@@ -178,8 +180,9 @@ public class EventService {
         log.setCustomerId(customerId);
         log.setTimestamp(new Date());
         log.setTicketCount(count);
+        log.setTotalTicketsAdded(event.getTotalTicketsAdded());
+        log.setTotalTicketsSold(event.getTotalTicketsSold());
         System.out.println(log);
-
         event.getTicketLogs().add(log);
         ticketLogWebSocketHandler.sendTicketLog(log.toString());
 
@@ -219,6 +222,8 @@ public class EventService {
         log.setCustomerId(customer.getUserId());
         log.setTimestamp(new Date());
         log.setTicketCount(count);
+        log.setTotalTicketsAdded(event.getTotalTicketsAdded());
+        log.setTotalTicketsSold(event.getTotalTicketsSold());
         System.out.println(log);
         event.getTicketLogs().add(log);
         notifyAll();
