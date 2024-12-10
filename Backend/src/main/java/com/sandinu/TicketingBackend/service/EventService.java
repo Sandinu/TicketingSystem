@@ -8,6 +8,7 @@ import com.sandinu.TicketingBackend.repo.EventRepo;
 import com.sandinu.TicketingBackend.repo.UserRepo;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -269,28 +270,14 @@ public class EventService {
         return eventRepo.save(event);
     }
 
-    public Event updateEventDate(String eventId, LocalDate eventDate){
+    public Event updateEventDetails(String eventId, String eventDesc, LocalDate eventDate, LocalTime eventStartTime, String eventLocation){
         Event event = getEventById(eventId);
         event.setEventDate(eventDate);
-        return eventRepo.save(event);
-    }
-
-    public Event updateEventStartTime(String eventId, LocalTime eventStartTime){
-        Event event = getEventById(eventId);
         event.setEventStartTime(eventStartTime);
-        return eventRepo.save(event);
-    }
-
-    public Event updateEventLocation(String eventId, String eventLocation){
-        Event event = getEventById(eventId);
         event.setEventLocation(eventLocation);
+        event.setEventDescription(eventDesc);
         return eventRepo.save(event);
     }
 
-    public Event updateEventDescription(String eventId, String eventDescription){
-        Event event = getEventById(eventId);
-        event.setEventDescription(eventDescription);
-        return eventRepo.save(event);
-    }
 
 }

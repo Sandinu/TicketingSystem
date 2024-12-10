@@ -15,6 +15,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { Textarea } from '@/components/ui/textarea';
+import { DatePickerDemo } from './_components/DatePicker';
 
 
 const Dashboard = () => {
@@ -33,6 +35,12 @@ const Dashboard = () => {
     const [customerRetrievalRate, setCustomerRetrievalRate] = useState(event.customerRetrievalRate);
 
     const [ticketAddDialog, setTicketAddDialog] = useState(false);
+    const [eventDetailsDialog, setEventDetailsDialog] = useState(false);
+
+    const [eventDesc, setEventDesc] = useState(event.eventDesc);
+    const [eventStartTime, setEventStartTime] = useState(event.eventStartTime);
+    const [eventLocation, setEventLocation] = useState(event.eventLocation);
+    const [eventDate, setEventDate] = useState(event.eventDate);
 
     const [addTicketCount, setAddTicketCount] = useState(0);
 
@@ -56,6 +64,10 @@ const Dashboard = () => {
             setTotalTickets(data.totalTickets);
             setTicketReleaseRate(data.ticketReleaseRate);
             setCustomerRetrievalRate(data.customerRetrievalRate);
+            setEventDesc(data.eventDescription);
+            setEventStartTime(data.eventStartTime);
+            setEventLocation(data.eventLocation);
+            setEventDate(data.eventDate);
 
             const initialChartData = data.ticketLogs.map(log => ({
                 totalTicketsAdded: log.totalTicketsAdded,
@@ -219,6 +231,43 @@ const Dashboard = () => {
         }
       };
 
+      const handleDateChange = (newDate) => {
+        setEventDate(newDate);
+      };
+
+      const handleEventDeets = async () => {
+        try {
+          const response = await fetch('http://localhost:8080/api/events/event-update', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                eventId: event.eventId,
+                eventDesc: eventDesc,
+                eventDate: eventDate,
+                eventStartTime: eventStartTime,
+                eventLocation: eventLocation
+             }),
+          });
+    
+          if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+          }
+    
+          const updatedEvent = await response.json();
+            setEvent(updatedEvent);
+            toast({
+                variant: "success",
+                title: 'Event Updated!',
+            })
+            console.log('Event updated:', updatedEvent);
+            window.location.reload();
+        } catch (error) {
+          console.log('Error starting simulation:', error);
+        }
+      };
+
 
     if (loading) {
         return <div>
@@ -240,7 +289,7 @@ const Dashboard = () => {
                         <EventDeets event={event}/>
                     </div>
                     <div className='h-1/4 align-middle w-full justify-center flex gap-6 mt-3'>
-                        <Button className='w-1/4 h-3/5 border-or bg-transparent border text-or rounded-full text-md uppercase hover:bg-or hover:text-white'>Edit Event</Button>
+                        <Button className='w-1/4 h-3/5 border-or bg-transparent border text-or rounded-full text-md uppercase hover:bg-or hover:text-white' onClick={() => setEventDetailsDialog(true)}>Edit Event</Button>
                         <Button className='w-1/4 h-3/5  border-or bg-transparent border text-or rounded-full text-md uppercase hover:bg-or hover:text-white'>Add vendors</Button>
                         <Button className='w-1/4 h-3/5  border-or bg-transparent border text-or rounded-full text-md uppercase hover:bg-or hover:text-white' onClick={() => setTicketAddDialog(true)}>Add tickets</Button>
                         <Button onClick={() => setRunSimPanel(!runSimPanel)} className='w-1/4 h-3/5  border-or bg-transparent border text-or rounded-full text-md uppercase hover:bg-or hover:text-white'>Run simulation</Button>
@@ -299,11 +348,11 @@ const Dashboard = () => {
                                     <DialogTrigger className='bg-white text-bdark hover:bg-or py-3 rounded-full font-medium tracking-wide'>EDIT CONFIGURATION</DialogTrigger>
                                     <DialogContent>
                                         <DialogHeader>
-                                        <DialogTitle>Edit Event Configurations</DialogTitle>
+                                        <DialogTitle className="mb-4">Edit Event Configurations</DialogTitle>
                                         <DialogDescription>
 
                                                 <Label htmlFor='maxCapacity'>Total Tickets</Label>
-                                                <Input type='number' id='totalTickets' value={totalTickets} onChange={(e) => setTotalTickets(e.target.value)} className="mt-2"/>
+                                                <Input type='number' id='totalTickets' value={totalTickets} onChange={(e) => setTotalTickets(e.target.value)} className="mt-2 mb-3"/>
 
                                                 <Label htmlFor='maxCapacity'>Ticket Release Rate</Label>
                                                 <Input type='number' id='ticketRate' value={ticketReleaseRate} onChange={(e) => setTicketReleaseRate(e.target.value)} className="mt-2"/>
@@ -335,6 +384,31 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
+
+            <Dialog open={eventDetailsDialog} onOpenChange={setEventDetailsDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                    <DialogTitle className="mb-5">Edit Event Details</DialogTitle>
+                    <DialogDescription>
+
+                            <Label htmlFor='location'>Event Location</Label>
+                            <Input type='text' id='location' value={eventLocation}  onChange={(e) => setEventLocation(e.target.value)} className="mt-2 mb-3"/>
+
+                            <Label htmlFor='starttime'>Event Start Time (HH:MM:SS)</Label>
+                            <Input type='text' id='starttime' value={eventStartTime}  onChange={(e) => setEventStartTime(e.target.value)} className="mt-2 mb-3"/>
+
+                            <Label htmlFor='starttime'>Event Start Time (HH:MM:SS)</Label>
+                            <DatePickerDemo eventDate={eventDate} onDateChange={handleDateChange} className="mt-2 mb-3"/> <br/>
+
+                            <Label htmlFor='eventDesc'>Event Description</Label>
+                            <Textarea type='text' id='eventDesc' value={eventDesc}  onChange={(e) => setEventDesc(e.target.value)} />
+
+                        <Button className="mt-5 bg-or hover:bg-orange" onClick={handleEventDeets}>EDIT DETAILS</Button>
+                    </DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
+
         </div>
     );
 };

@@ -196,39 +196,12 @@ public class EventController {
     }
 
 
-    @PostMapping("/date-update")
+    @PostMapping("/event-update")
     public ResponseEntity<Event> updateEventDate(
-            @RequestParam String eventId,
-            @RequestParam LocalDate eventDate
+            @RequestBody UpdateEventDTO updateEventDTO
     ){
-        Event event = eventService.updateEventDate(eventId, eventDate);
-        return ResponseEntity.ok(event);
-    }
-
-    @PostMapping("/start-time-update")
-    public ResponseEntity<Event> updateEventStartTime(
-            @RequestParam String eventId,
-            @RequestParam LocalTime eventStartTime
-    ){
-        Event event = eventService.updateEventStartTime(eventId, eventStartTime);
-        return ResponseEntity.ok(event);
-    }
-
-    @PostMapping("/location-update")
-    public ResponseEntity<Event> updateEventLocation(
-            @RequestParam String eventId,
-            @RequestParam String eventLocation
-    ){
-        Event event = eventService.updateEventLocation(eventId, eventLocation);
-        return ResponseEntity.ok(event);
-    }
-
-    @PostMapping("/description-update")
-    public ResponseEntity<Event> updateEventDescription(
-            @RequestParam String eventId,
-            @RequestParam String description
-    ){
-        Event event = eventService.updateEventDescription(eventId, description);
+        Event event = eventService.updateEventDetails(updateEventDTO.getEventId(), updateEventDTO.getEventDesc(), updateEventDTO.getEventDate(), updateEventDTO.getEventStartTime(), updateEventDTO.getEventLocation());
         return ResponseEntity.ok(event);
     }
 }
+
