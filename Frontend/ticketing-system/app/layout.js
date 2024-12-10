@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
 export const metadata = {
@@ -12,6 +13,7 @@ export default function RootLayout({ children }) {
         className={`bg-bdark`}
       >
         {children}
+        <Toaster/>
       </body>
     </html>
   );

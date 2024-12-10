@@ -1,8 +1,6 @@
 package com.sandinu.TicketingBackend.controller;
 
-import com.sandinu.TicketingBackend.DTO.AddTicketDTO;
-import com.sandinu.TicketingBackend.DTO.UserEventId;
-import com.sandinu.TicketingBackend.DTO.VipCustomerDTO;
+import com.sandinu.TicketingBackend.DTO.*;
 import com.sandinu.TicketingBackend.model.Event;
 import com.sandinu.TicketingBackend.service.*;
 import com.sun.java.accessibility.util.EventID;
@@ -78,6 +76,20 @@ public class EventController {
     ){
         try {
             Event event = eventService.purchaseTickets(eventId, count);
+            return ResponseEntity.ok(event);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore the interrupt flag
+            return ResponseEntity.status(500).body(null); // Internal Server Error
+        }
+    }
+
+    @PostMapping("/{eventId}/purchase-tickets-admin")
+    public ResponseEntity<Event> purchaseTicketsAdmin(
+            @PathVariable String eventId,
+            @RequestBody PurchaseTicketDTO purchaseTicketDTO
+    ){
+        try {
+            Event event = eventService.purchaseTickets(eventId, purchaseTicketDTO.getTicketCount(), purchaseTicketDTO.getCustomerId());
             return ResponseEntity.ok(event);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // Restore the interrupt flag
@@ -174,32 +186,15 @@ public class EventController {
         return ResponseEntity.ok(events);
     }
 
-    @PostMapping("/release-rate-update")
+    @PostMapping("/config-update")
     public ResponseEntity<Event> updateReleaseRate(
-            @RequestParam String eventId,
-            @RequestParam int releaseRate
-    ){
-        Event event = eventService.updateTicketReleaseRate(eventId, releaseRate);
+            @RequestBody ConfigDTO configDTO
+            ){
+        Event event = eventService.updateConfiguration(configDTO.getEventId(), configDTO.getTicketReleaseRate(), configDTO.getCustomerRetrievalRate(), configDTO.getTotalTickets());
+        System.out.println(event);
         return ResponseEntity.ok(event);
     }
 
-    @PostMapping("/retrieval-rate-update")
-    public ResponseEntity<Event> updateRetrievalRate(
-            @RequestParam String eventId,
-            @RequestParam int retrievalRate
-    ){
-        Event event = eventService.updateCustomerRetrievalRate(eventId, retrievalRate);
-        return ResponseEntity.ok(event);
-    }
-
-    @PostMapping("/total-tickets-update")
-    public ResponseEntity<Event> updateTotalTickets(
-            @RequestParam String eventId,
-            @RequestParam int totalTickets
-    ){
-        Event event = eventService.updateTotalTickets(eventId, totalTickets);
-        return ResponseEntity.ok(event);
-    }
 
     @PostMapping("/date-update")
     public ResponseEntity<Event> updateEventDate(

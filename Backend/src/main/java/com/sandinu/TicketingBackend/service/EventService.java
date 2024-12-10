@@ -261,15 +261,11 @@ public class EventService {
         return eventRepo.findAll();
     }
 
-    public Event updateTicketReleaseRate(String eventId, int ticketReleaseRate){
+    public Event updateConfiguration(String eventId, int ticketReleaseRate, int customerRetrievalRate, int totalTickets){
         Event event = getEventById(eventId);
         event.setTicketReleaseRate(ticketReleaseRate);
-        return eventRepo.save(event);
-    }
-
-    public Event updateCustomerRetrievalRate(String eventId, int customerRetrievalRate){
-        Event event = getEventById(eventId);
         event.setCustomerRetrievalRate(customerRetrievalRate);
+        event.setTotalTickets(totalTickets);
         return eventRepo.save(event);
     }
 
@@ -297,9 +293,4 @@ public class EventService {
         return eventRepo.save(event);
     }
 
-    public Event updateTotalTickets(String eventId, int totalTickets){
-        Event event = getEventById(eventId);
-        event.setTotalTickets(totalTickets);
-        return eventRepo.save(event);
-    }
 }
