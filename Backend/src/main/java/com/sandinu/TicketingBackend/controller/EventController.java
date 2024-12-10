@@ -22,8 +22,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public class EventController {
     private final EventService eventService;
 
-    ExecutorService executor = Executors.newFixedThreadPool(100, new PriorityThreadFactory(Thread.MIN_PRIORITY));
+    ExecutorService executor = Executors.newFixedThreadPool(200, new PriorityThreadFactory(Thread.MIN_PRIORITY));
     ExecutorService VipExecutors;
+    private int manualVendors = 1;
+    private int manualCustomers = 1;
 
     public EventController(EventService eventService){
         this.eventService = eventService;
@@ -103,7 +105,7 @@ public class EventController {
     ){
 
         if (executor.isShutdown()) {
-            executor = Executors.newFixedThreadPool(100, new PriorityThreadFactory(Thread.MIN_PRIORITY));
+            executor = Executors.newFixedThreadPool(200, new PriorityThreadFactory(Thread.MIN_PRIORITY));
         }
 
         for (int i = 0; i <= 50; i++){
@@ -126,6 +128,24 @@ public class EventController {
             VipExecutors.submit(new CustomerTask(eventService, vipCustomerDTO.getEventId(), "VIPCustomer"+i, true));
         }
         return ResponseEntity.ok("VIP Customers Added!");
+    }
+
+    @PostMapping("/add-vendor")
+    public ResponseEntity<String> addVendor(
+            @RequestBody UserEventId userEventId
+    ){
+        executor.submit(new VendorTask(eventService, userEventId.getEventId(), "manualVendor" + manualVendors));
+        manualVendors++;
+        return ResponseEntity.ok("Vendor Added!");
+    }
+
+    @PostMapping("/add-customer")
+    public ResponseEntity<String> addCustomer(
+            @RequestBody UserEventId userEventId
+    ){
+        executor.submit(new CustomerTask(eventService, userEventId.getEventId(), "simCustomer"+ manualCustomers, false));
+        manualCustomers++;
+        return ResponseEntity.ok("Vendor Added!");
     }
 
     @PostMapping("/sim-pause")
