@@ -13,4 +13,6 @@ public class TicketLog {
     private String vendorId;
     private Date timestamp;
     private int ticketCount;
+    private int totalTicketsAdded;
+    private int totalTicketsSold;
 }
