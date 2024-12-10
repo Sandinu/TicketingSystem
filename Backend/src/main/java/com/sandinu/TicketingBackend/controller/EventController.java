@@ -22,8 +22,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public class EventController {
     private final EventService eventService;
 
-    ExecutorService executor = Executors.newFixedThreadPool(100, new PriorityThreadFactory(Thread.MIN_PRIORITY));
+    ExecutorService executor = Executors.newFixedThreadPool(200, new PriorityThreadFactory(Thread.MIN_PRIORITY));
     ExecutorService VipExecutors;
+    private int manualVendors = 1;
+    private int manualCustomers = 1;
 
     public EventController(EventService eventService){
         this.eventService = eventService;
@@ -103,7 +105,7 @@ public class EventController {
     ){
 
         if (executor.isShutdown()) {
-            executor = Executors.newFixedThreadPool(100, new PriorityThreadFactory(Thread.MIN_PRIORITY));
+            executor = Executors.newFixedThreadPool(200, new PriorityThreadFactory(Thread.MIN_PRIORITY));
         }
 
         for (int i = 0; i <= 50; i++){
@@ -126,6 +128,24 @@ public class EventController {
             VipExecutors.submit(new CustomerTask(eventService, vipCustomerDTO.getEventId(), "VIPCustomer"+i, true));
         }
         return ResponseEntity.ok("VIP Customers Added!");
+    }
+
+    @PostMapping("/add-vendor")
+    public ResponseEntity<String> addVendor(
+            @RequestBody UserEventId userEventId
+    ){
+        executor.submit(new VendorTask(eventService, userEventId.getEventId(), "manualVendor" + manualVendors));
+        manualVendors++;
+        return ResponseEntity.ok("Vendor Added!");
+    }
+
+    @PostMapping("/add-customer")
+    public ResponseEntity<String> addCustomer(
+            @RequestBody UserEventId userEventId
+    ){
+        executor.submit(new CustomerTask(eventService, userEventId.getEventId(), "simCustomer"+ manualCustomers, false));
+        manualCustomers++;
+        return ResponseEntity.ok("Vendor Added!");
     }
 
     @PostMapping("/sim-pause")
@@ -196,39 +216,12 @@ public class EventController {
     }
 
 
-    @PostMapping("/date-update")
+    @PostMapping("/event-update")
     public ResponseEntity<Event> updateEventDate(
-            @RequestParam String eventId,
-            @RequestParam LocalDate eventDate
+            @RequestBody UpdateEventDTO updateEventDTO
     ){
-        Event event = eventService.updateEventDate(eventId, eventDate);
-        return ResponseEntity.ok(event);
-    }
-
-    @PostMapping("/start-time-update")
-    public ResponseEntity<Event> updateEventStartTime(
-            @RequestParam String eventId,
-            @RequestParam LocalTime eventStartTime
-    ){
-        Event event = eventService.updateEventStartTime(eventId, eventStartTime);
-        return ResponseEntity.ok(event);
-    }
-
-    @PostMapping("/location-update")
-    public ResponseEntity<Event> updateEventLocation(
-            @RequestParam String eventId,
-            @RequestParam String eventLocation
-    ){
-        Event event = eventService.updateEventLocation(eventId, eventLocation);
-        return ResponseEntity.ok(event);
-    }
-
-    @PostMapping("/description-update")
-    public ResponseEntity<Event> updateEventDescription(
-            @RequestParam String eventId,
-            @RequestParam String description
-    ){
-        Event event = eventService.updateEventDescription(eventId, description);
+        Event event = eventService.updateEventDetails(updateEventDTO.getEventId(), updateEventDTO.getEventDesc(), updateEventDTO.getEventDate(), updateEventDTO.getEventStartTime(), updateEventDTO.getEventLocation());
         return ResponseEntity.ok(event);
     }
 }
+
