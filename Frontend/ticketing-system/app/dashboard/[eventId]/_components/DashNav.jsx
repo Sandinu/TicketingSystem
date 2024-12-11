@@ -36,13 +36,18 @@ const DashNav = () => {
             </div>
                 
                 <div className="flex gap-3 items-center">
-                  {
+                  { user == null ?
+                    (<div>
+                      <Link href="/signup"> <Button className='rounded-full mx-4 w-40 bg-transparent border border-white text-white hover:bg-white hover:text-or'>SIGNUP</Button></Link>
+                      <Link href="/login"><Button className='rounded-full w-40 bg-or text-white hover:bg-white hover:text-or' onClick={handleLogOut}>LOGIN</Button></Link>
+                    </div>) :
                     user.roles == "ROLE_VENDOR" ?
-                      <div>
+                      (<div>
                         <Link href="/create-event"> <Button className='rounded-full mx-4 w-40 bg-white text-or hover:bg-or hover:text-white'>Create Event</Button></Link>
                         <Button className='rounded-full w-40 bg-or text-white hover:bg-white hover:text-or' onClick={handleLogOut}>LOGOUT</Button>
-                      </div>
-                    : <Button className='rounded-full w-40 bg-or text-white hover:bg-white hover:text-or' onClick={handleLogOut}>LOGOUT</Button>
+                      </div>) : user.roles == "ROLE_CUSTOMER"
+                     (<Button className='rounded-full w-40 bg-or text-white hover:bg-white hover:text-or' onClick={handleLogOut}>LOGOUT</Button>)
+                      
                   }
                 </div>
 

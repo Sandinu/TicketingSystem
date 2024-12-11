@@ -192,7 +192,7 @@ public class EventController {
         return csvExport.exportToCsv(userEventId.getEventId());
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<Event>> getAllEvents(){
         List<Event> events = eventService.getAllEvents();
         return ResponseEntity.ok(events);
