@@ -1,6 +1,8 @@
 package com.sandinu.TicketingBackend.controller;
 
+import com.sandinu.TicketingBackend.DTO.LoggedInUser;
 import com.sandinu.TicketingBackend.DTO.LoginData;
+import com.sandinu.TicketingBackend.DTO.RegisterUserDTO;
 import com.sandinu.TicketingBackend.model.User;
 import com.sandinu.TicketingBackend.model.UserDeets;
 import com.sandinu.TicketingBackend.service.UserService;
@@ -22,14 +24,25 @@ public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(
-           @RequestBody LoginData loginData,
-            HttpSession httpSession){
+
+@PostMapping("/login")
+public ResponseEntity<?> login(
+       @RequestBody LoginData loginData,
+        HttpSession httpSession){
+    try {
         UserDeets user = userService.login(loginData.getEmail(), loginData.getPassword(), httpSession);
+        LoggedInUser loggedInUser = new LoggedInUser();
+        loggedInUser.setEmail(user.getEmail());
+        loggedInUser.setUsername(user.getUsername());
+        loggedInUser.setRoles(user.getRoles());
+        loggedInUser.setId(user.getId());
+
         System.out.println(loginData.getEmail());
-        return ResponseEntity.ok(user.getEmail());
+        return ResponseEntity.ok(loggedInUser);
+    } catch (RuntimeException e) {
+        return ResponseEntity.status(404).body("User not found");
     }
+}
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpSession httpSession){
@@ -39,21 +52,17 @@ public class UserController {
 
     @PostMapping("/register/customer")
     public ResponseEntity<User> registerCustomer(
-            @RequestParam String name,
-            @RequestParam String email,
-            @RequestParam String password
+            @RequestBody RegisterUserDTO registerUserDTO
     ){
-        User user = userService.registerCustomer(name, email, password);
+        User user = userService.registerCustomer(registerUserDTO.getName(), registerUserDTO.getEmail(), registerUserDTO.getPassword());
         return ResponseEntity.ok(user);
     }
 
     @PostMapping("/register/vendor")
     public ResponseEntity<User> registerVendor(
-            @RequestParam String name,
-            @RequestParam String email,
-            @RequestParam String password
-    ){
-        User user = userService.registerVendor(name, email, password);
+            @RequestBody RegisterUserDTO registerUserDTO
+            ){
+        User user = userService.registerVendor(registerUserDTO.getName(), registerUserDTO.getEmail(), registerUserDTO.getPassword());
         return ResponseEntity.ok(user);
     }
 

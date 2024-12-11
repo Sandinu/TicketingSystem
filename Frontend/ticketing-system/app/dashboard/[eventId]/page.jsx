@@ -8,7 +8,7 @@ import SimulationPanel from './_components/SimulationPanel';
 import { Chart } from './_components/Chart';
 import TicketLog from './_components/Ticketlog';
 import VendorList from './_components/VendorList';
-import useEventWebSocket from './../../hooks/EventDeetsSocket';
+import useEventWebSocket from '../../../hooks/EventDeetsSocket';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -17,9 +17,11 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePickerDemo } from './_components/DatePicker';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 
 
-const Dashboard = () => {
+const Dashboard = ({params}) => {
+
     const [event, setEvent] = useState(true);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -46,7 +48,16 @@ const Dashboard = () => {
 
     const {toast} = useToast();
 
-
+    useEffect(() => {
+      const fetchParams = async () => {
+          const unwrappedParams = await params;
+          const eventId = unwrappedParams.eventId;
+          if (eventId) {
+              fetchEvent(`${eventId}`);
+          }
+      };
+      fetchParams();
+  }, [params]);
 
     const fetchEvent = async (eventId) => {
         try {
@@ -83,10 +94,10 @@ const Dashboard = () => {
     };
 
 
-    useEffect(() => {
-        const eventId = '6754214e77d2145538124927'; // Replace with actual event ID
-        fetchEvent(eventId);
-    }, []);
+    // useEffect(() => {
+    //     const eventId = '6754214e77d2145538124927'; // Replace with actual event ID
+    //     fetchEvent(eventId);
+    // }, []);
 
     const {messages, connectionStatus} = useEventWebSocket('ws://localhost:8080/ws/event-stats')
 
@@ -117,10 +128,10 @@ const Dashboard = () => {
     //     "eventStartTime": "13:40:23",
     //     "eventLocation": "Test"}
 
-    useEffect(() => {
-        const eventId = '6754214e77d2145538124927'; // Replace with actual event ID
-        fetchEvent(eventId);
-    }, []);
+    // useEffect(() => {
+    //     const eventId = '6754214e77d2145538124927'; // Replace with actual event ID
+    //     fetchEvent(eventId);
+    // }, []);
 
     //gets the csv format from the backend and create the file and download it
     const handleLogDownload = async () => {
