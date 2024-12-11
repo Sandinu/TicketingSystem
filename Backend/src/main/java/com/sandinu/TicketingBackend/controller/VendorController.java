@@ -36,6 +36,12 @@ public class VendorController {
         return ResponseEntity.ok(vendor);
     }
 
+    @GetMapping("/{vendorId}")
+    public ResponseEntity<Vendor> getVendor(@PathVariable String vendorId){
+        Vendor vendor = vendorService.findVendorById(vendorId);
+        return ResponseEntity.ok(vendor);
+    }
+
     @GetMapping
     public ResponseEntity<List<Vendor>> getAllVendors(){
         return ResponseEntity.ok(vendorService.getAllVendors());

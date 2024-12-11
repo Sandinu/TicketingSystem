@@ -8,6 +8,7 @@ import { DatePickerD } from './_components/DatePicker';
 import { Button } from '@/components/ui/button';
 import { UserContext } from '@/UserContext';
 import { useToast } from '@/hooks/use-toast';
+import DashNav from './../dashboard/[eventId]/_components/DashNav';
 
 
 
@@ -74,18 +75,30 @@ const page = () => {
             return;      
           }
           const data = await response.text();
+          console.log('Event creation response:', data);
           toast({
             variant: "success",
             title: 'Event creation successful',
           })
+          window.location.href = `/vendor-profile`;
         } catch (error) {
           console.log('Error login:', error);
         }
       };
 
+      
+      if(user.roles == "ROLE_CUSTOMER"){
+        return <div className='text-center justify-center pt-10'>
+            <h1 className="text-white text-6xl font-semibold text-center mt-10 mb-5">Unauthorized Access</h1>
+            <Button className="bg-or rounded-full text-white hover:bg-white hover:text-or">BACK TO HOME PAGE</Button>
+        </div>
+    }
+
     
   return (
+    <div className='px-10 pt-5'><DashNav/>
     <div className="text-center p-10 flex flex-col items-center justify-center">
+        
         <div>
             <h1 className="text-white text-4xl font-bold">CREATE EVENT</h1>
         </div>
@@ -135,7 +148,7 @@ const page = () => {
 
                 <div className="w-2/5 flex flex-col items-center">
  
-                    <CldUploadWidget uploadPreset="OOP_CW"   onSuccess={(results) => {setEventImageUrl(results.info.secure_url)}}>
+                    <CldUploadWidget uploadPreset="OOP_CW"   onSuccess={(results) => {setEventImageUrl(results.info.secure_url)}} cropping={true} croppingAspectRatio={1} options={{cropping:true, croppingAspectRatio:1, }}>
                     {({ open }) => {
                         return (
                         <Button onClick={() => open()} className="w-full rounded-full h-12 bg-white text-blight hover:bg-or hover:text-white">UPLOAD AN EVENT FLYER</Button>
@@ -147,7 +160,7 @@ const page = () => {
                     <Button onClick={handleCreateEvent} className="w-full rounded-full h-12 bg-or text-white hover:bg-white hover:text-or">ADD EVENT</Button>
                 </div>
             </div>
-    </div>
+    </div></div>
   )
 }
 
