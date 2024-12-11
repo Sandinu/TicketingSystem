@@ -35,6 +35,7 @@ public class Event {
 
     private List<Vendor> vendorId = new ArrayList<>(); //list of vendors for each event
     private List<TicketLog> ticketLogs = new ArrayList<>(); //Ticket transaction logs
+    private String eventImageUrl;
 
     private boolean isSoldOut(){
         return totalTicketsSold >= totalTickets;

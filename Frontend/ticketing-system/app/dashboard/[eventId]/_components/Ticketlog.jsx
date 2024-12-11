@@ -1,5 +1,5 @@
 import React from "react";
-import useWebSocket from './../../../hooks/WebSocket';
+import useWebSocket from '../../../../hooks/WebSocket';
 import './Ticketlog.css';
 
 const TicketLog = () => {

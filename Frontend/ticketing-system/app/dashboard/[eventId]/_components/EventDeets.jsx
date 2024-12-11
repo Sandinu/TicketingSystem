@@ -1,8 +1,10 @@
-import React from 'react'
+import { UserContext } from '@/UserContext'
+import React, { useContext } from 'react'
 
 
 
 const EventDeets = ({event}) => {
+  const {user} = useContext(UserContext);
     // const event = {
     //     "eventId": "6754214e77d2145538124927",
     //     "eventName": "Holi",
@@ -23,7 +25,7 @@ const EventDeets = ({event}) => {
             <div className='w-full h-50 bg-blight py-8 z-10 absolute top-5 rounded-xl align-middle justify-center border'>
                 <div className=''>
                     <h1 className='text-white text-6xl uppercase font-extrabold tracking-widest'>{event.eventName}</h1>
-                    <h2 className='text-white font-light text-xl mt-1'>@vendor name</h2>
+                    <h2 className='text-white font-light text-xl mt-1'>{user.username}</h2>
                 </div>
                 <div className='flex flex-row w-full justify-center mt-6 gap-4 px-20'>
                     <div className='bg-or py-2 w-1/3 rounded-full text-bdark font-medium text-xl'>{event.eventDate}</div>

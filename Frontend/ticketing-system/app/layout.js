@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
+import { UserProvider } from './../UserContext';
 
 export const metadata = {
   title: "Create Next App",
@@ -12,8 +13,10 @@ export default function RootLayout({ children }) {
       <body
         className={`bg-bdark`}
       >
+        <UserProvider>
         {children}
         <Toaster/>
+        </UserProvider>
       </body>
     </html>
   );
