@@ -61,7 +61,7 @@ const Dashboard = ({params}) => {
 
     const fetchEvent = async (eventId) => {
         try {
-            const url = `http://localhost:8080/api/events/${eventId}`;
+            const url = `${process.env.NEXT_PUBLIC_API_URL}/api/events/${eventId}`;
             console.log(`Fetching event from URL: ${url}`);
             const response = await fetch(url);
             if (!response.ok) {
@@ -301,7 +301,7 @@ const Dashboard = ({params}) => {
                     </div>
                     <div className='h-1/4 align-middle w-full justify-center flex gap-6 mt-3'>
                         <Button className='w-1/4 h-3/5 border-or bg-transparent border text-or rounded-full text-md uppercase hover:bg-or hover:text-white' onClick={() => setEventDetailsDialog(true)}>Edit Event</Button>
-                        <Button className='w-1/4 h-3/5  border-or bg-transparent border text-or rounded-full text-md uppercase hover:bg-or hover:text-white'>Add vendors</Button>
+                        <Button className='w-1/4 h-3/5  border-or bg-transparent border text-or rounded-full text-md uppercase hover:bg-or hover:text-white' disabled>Add vendors</Button>
                         <Button className='w-1/4 h-3/5  border-or bg-transparent border text-or rounded-full text-md uppercase hover:bg-or hover:text-white' onClick={() => setTicketAddDialog(true)}>Add tickets</Button>
                         <Button onClick={() => setRunSimPanel(!runSimPanel)} className='w-1/4 h-3/5  border-or bg-transparent border text-or rounded-full text-md uppercase hover:bg-or hover:text-white'>Run simulation</Button>
                     </div>

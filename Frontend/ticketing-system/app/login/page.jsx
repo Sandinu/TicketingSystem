@@ -48,9 +48,13 @@ const page = () => {
       console.log('Error login:', error);
     }
   };
+
   useEffect(() => {
     if (user) {
       console.log('Updated user:', user);
+      if(user.roles == 'ROLE_VENDOR'){
+        window.location.href = '/vendor-profile';
+      }
     }
   }, [user]);
 
