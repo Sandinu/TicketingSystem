@@ -9,8 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@edgestore/react": "^0.2.2",
-    "@edgestore/server": "^0.2.2",
     "@fortawesome/fontawesome-svg-core": "^6.7.1",
     "@fortawesome/free-solid-svg-icons": "^6.7.1",
     "@fortawesome/react-fontawesome": "^0.2.2",
@@ -32,11 +30,9 @@
     "react": "^19.0.0",
     "react-day-picker": "^8.10.1",
     "react-dom": "^19.0.0",
-    "react-dropzone": "^14.3.5",
     "recharts": "^2.14.1",
     "tailwind-merge": "^2.5.5",
-    "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.24.1"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/node": "22.10.1",
