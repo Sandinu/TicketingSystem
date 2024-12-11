@@ -252,7 +252,7 @@ const SimulationPanel = ({eventid}) => {
             <Button className='w-1/6 py-6 rounded-full bg-bdark hover:bg-blight' onClick={handleStartClick}>START</Button>
             : <Button className='w-1/6 py-6 rounded-full bg-bdark hover:bg-blight' onClick={handleStopClick}>STOP</Button>
             }
-          <Button className='w-1/6 py-6 rounded-full bg-bdark hover:bg-blight' onClick={handleStopClick} disabled={!simRunning}>PAUSE</Button>
+          <Button className='w-1/6 py-6 rounded-full bg-bdark hover:bg-blight' onClick={handleStopClick}>PAUSE</Button>
           <Button className='w-1/6 py-6 rounded-full bg-bdark hover:bg-blight' onClick={handleResetClick}>RESET</Button>
       </div>
       <div className="w-full justify-center flex gap-5 mt-5 uppercase">

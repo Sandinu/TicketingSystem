@@ -17,7 +17,7 @@ const page = () => {
     const {toast} = useToast();
     const [resource, setResource] = useState(null);
     const [eventName, setEventName] = useState('');
-    const [eventDate, setEventDate] = useState(null);
+    const [eventDate, setEventDate] = useState('');
     const [eventImageUrl, setEventImageUrl] = useState('');
     const [eventDescription, setEventDescription] = useState('');
     const [maxCapacity, setMaxCapacity] = useState('');
@@ -41,6 +41,34 @@ const page = () => {
           });
           return;
         }
+
+        if(!eventName ||!eventDate ||!maxCapacity ||!totalTickets ||!customerRetrievalRate ||!ticketReleaseRate ||!eventStartTime ||!eventLocation ){
+            toast({
+              variant: "destructive",
+              title: 'Missing Fields',
+              description: 'Please fill in all the fields',
+            });
+            return;
+        }
+
+        if(maxCapacity <= 0 || totalTickets <= 0 || customerRetrievalRate <= 0 ||  ticketReleaseRate <= 0){
+          toast({
+            variant: "destructive",
+            title: 'Value Error!',
+            description: 'Only positive values are allowed',
+          });
+          return;
+        }
+
+        if(eventDate < new Date()){
+          toast({
+            variant: "destructive",
+            title: 'Invalid Date',
+            description: 'Event date cannot be in the past.',
+          });
+          return;
+        }
+
 
         try {
           const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/create`, {
@@ -104,46 +132,46 @@ const page = () => {
         </div>
         <div className="w-full flex flex-col items-center justify-center mt-6">
                 <div className="w-2/5 flex flex-col items-center">
-                    <Label htmlFor='eventName' className="text-gray-300 mb-3">Event Name</Label>
-                    <Input className='bg-blight  text-white border-none h-12 w-full rounded-full text-center mb-8' id="eventName" placeholder='Event Name' onChange={(e) => setEventName(e.target.value)}></Input>
+                    <Label htmlFor='eventName' className="text-gray-300 mb-3">Event Name*</Label>
+                    <Input className='bg-blight  text-white border-none h-12 w-full rounded-full text-center mb-8' id="eventName" placeholder='Event Name' onChange={(e) => setEventName(e.target.value)} required={true}></Input>
                     
                     <Label htmlFor='eventDescription' className="text-gray-300 mb-3">Event Description</Label>
                     <Textarea className='bg-blight text-white border-none h-12 w-full rounded-lg text-center mb-8' id="eventDescription" placeholder='Event Description' onChange={(e) => setEventDescription(e.target.value)}></Textarea>
                 </div>
 
                 <div className="w-2/5 flex flex-col items-center">
-                    <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Max Capacity</Label>
-                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' id="maxCapacity" placeholder='Max Capacity' onChange={(e) => setMaxCapacity(e.target.value)}></Input>
+                    <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Max Capacity*</Label>
+                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' id="maxCapacity" placeholder='Max Capacity' onChange={(e) => setMaxCapacity(e.target.value)} required></Input>
                 </div>
 
                 <div className="w-2/5 flex flex-col items-center">
-                    <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Total Tickets</Label>
-                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' id="maxCapacity" placeholder='Total Tickets' onChange={(e) => setTotalTickets(e.target.value)}></Input>
+                    <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Total Tickets*</Label>
+                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' id="maxCapacity" placeholder='Total Tickets' onChange={(e) => setTotalTickets(e.target.value)} required></Input>
                 </div>
 
                 <div className="w-2/5 flex flex-col items-center">
-                    <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Customer Retrieval Rate</Label>
-                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' id="maxCapacity" placeholder='Customer Retrieval Rate' onChange={(e) => setCustomerRetrievalRate(e.target.value)}></Input>
+                    <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Customer Retrieval Rate*</Label>
+                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' id="maxCapacity" placeholder='Customer Retrieval Rate' onChange={(e) => setCustomerRetrievalRate(e.target.value)} required></Input>
                 </div>
 
                 <div className="w-2/5 flex flex-col items-center">
-                    <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Ticket Release Rate</Label>
-                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' id="maxCapacity" placeholder='Ticket Release Rate' onChange={(e) => setTicketReleaseRate(e.target.value)}></Input>
+                    <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Ticket Release Rate*</Label>
+                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' id="maxCapacity" placeholder='Ticket Release Rate' onChange={(e) => setTicketReleaseRate(e.target.value)} required></Input>
                 </div>
 
                 <div className="w-2/5 flex flex-col items-center">
-                    <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Event Date</Label>
+                    <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Event Date*</Label>
                     <DatePickerD eventDate={null} onDateChange={handleDateChange} className="mt-2 mb-3"/> <br/>
                 </div>
 
                 <div className="w-2/5 flex flex-col items-center">
-                    <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Event Start Time (HH:MM:SS)</Label>
-                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' id="maxCapacity" placeholder='Event Start Time (HH:MM:SS)' onChange={(e) => setEventStartTime(e.target.value)}></Input>
+                    <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Event Start Time* (HH:MM:SS)</Label>
+                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' id="maxCapacity" placeholder='Event Start Time (HH:MM:SS)' onChange={(e) => setEventStartTime(e.target.value)} required></Input>
                 </div>
 
                 <div className="w-2/5 flex flex-col items-center">
-                    <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Event Location</Label>
-                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' id="maxCapacity" placeholder='Event Location' onChange={(e) => setEventLocation(e.target.value)}></Input>
+                    <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Event Location*</Label>
+                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' id="maxCapacity" placeholder='Event Location' onChange={(e) => setEventLocation(e.target.value)} required></Input>
                 </div>
 
                 <div className="w-2/5 flex flex-col items-center">

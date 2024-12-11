@@ -23,7 +23,7 @@ public class EventController {
     private final EventService eventService;
 
     ExecutorService executor = Executors.newFixedThreadPool(200, new PriorityThreadFactory(Thread.MIN_PRIORITY));
-    ExecutorService VipExecutors;
+    ExecutorService VipExecutors = Executors.newFixedThreadPool(50, new PriorityThreadFactory(Thread.MAX_PRIORITY));;
     private int manualVendors = 1;
     private int manualCustomers = 1;
 
@@ -114,8 +114,9 @@ public class EventController {
     public ResponseEntity<String> addVipCustomer(
             @RequestBody VipCustomerDTO vipCustomerDTO
             ){
-        VipExecutors = Executors.newFixedThreadPool(vipCustomerDTO.getCount(), new PriorityThreadFactory(Thread.MAX_PRIORITY));
-
+        if (VipExecutors.isShutdown()) {
+            VipExecutors = Executors.newFixedThreadPool(50, new PriorityThreadFactory(Thread.MAX_PRIORITY));
+        }
         for (int i = 0; i <= vipCustomerDTO.getCount(); i++){
             VipExecutors.submit(new CustomerTask(eventService, vipCustomerDTO.getEventId(), "VIPCustomer"+i, true));
         }
