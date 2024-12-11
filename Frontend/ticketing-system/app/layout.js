@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import { UserProvider } from './../UserContext';
+import { EdgeStoreProvider } from "@/lib/edgestore";
 
 export const metadata = {
   title: "Create Next App",
@@ -13,10 +14,12 @@ export default function RootLayout({ children }) {
       <body
         className={`bg-bdark`}
       >
+        <EdgeStoreProvider>
         <UserProvider>
         {children}
         <Toaster/>
         </UserProvider>
+        </EdgeStoreProvider>
       </body>
     </html>
   );
