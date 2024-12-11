@@ -1,10 +1,12 @@
 'use client'
+import { UserContext } from '@/UserContext';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 const Event = ({eventId}) => {
     const [eventData, setEventData] = useState();
     const [loading, setLoading] = useState(true);
+    const {user} = useContext(UserContext);
 
     useEffect(() => {
         if(eventId){
@@ -39,7 +41,7 @@ const Event = ({eventId}) => {
 
     
   return (
-    <Link href={`/dashboard/${eventId}`}>
+     <Link href={ user == null || user.roles == "ROLE_CUSTOMER" ? `/event/${eventId}` : `/dashboard/${eventId}`}>
         <div>
           <div className='w-full m-3 pb-6 bg-blight rounded-xl overflow-hidden text-center h-min-[350px] h-max-[350px]'>
             {

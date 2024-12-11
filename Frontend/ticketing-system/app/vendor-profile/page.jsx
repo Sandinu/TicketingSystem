@@ -56,6 +56,7 @@ const page = () => {
         <h1 className="text-white text-6xl font-semibold">{user.username}</h1>
         <h3 className="text-white text-xl mt-2">{user.email}</h3>
       </div>
+      <h4 className="mt-10 text-blue-800 text-center">VENDOR EVENTS:</h4>
       <div className="grid grid-cols-4 gap-6 mt-5">
                 {userDetails?.associatedEvents.map(eventId => (
                     <Event key={eventId} eventId={eventId} />

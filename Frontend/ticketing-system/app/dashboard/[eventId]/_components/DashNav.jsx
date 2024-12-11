@@ -30,19 +30,24 @@ const DashNav = () => {
     <div>
       <nav>
       <div className="py-5 flex justify-between items-center">
-            <div className="flex flex-row items-center">
+            <a href="/"><div className="flex flex-row items-center">
                 <img src={'/logo.png'} alt="logo" width={40} height={25}/>
                 <span className="text-or text-xl font-bold ml-5">BOOK-IT</span>
-            </div>
+            </div></a>
                 
                 <div className="flex gap-3 items-center">
-                  {
+                  { user == null ?
+                    (<div>
+                      <Link href="/signup"> <Button className='rounded-full mx-4 w-40 bg-transparent border border-white text-white hover:bg-white hover:text-or'>SIGNUP</Button></Link>
+                      <Link href="/login"><Button className='rounded-full w-40 bg-or text-white hover:bg-white hover:text-or' onClick={handleLogOut}>LOGIN</Button></Link>
+                    </div>) :
                     user.roles == "ROLE_VENDOR" ?
-                      <div>
+                      (<div>
                         <Link href="/create-event"> <Button className='rounded-full mx-4 w-40 bg-white text-or hover:bg-or hover:text-white'>Create Event</Button></Link>
                         <Button className='rounded-full w-40 bg-or text-white hover:bg-white hover:text-or' onClick={handleLogOut}>LOGOUT</Button>
-                      </div>
-                    : <Button className='rounded-full w-40 bg-or text-white hover:bg-white hover:text-or' onClick={handleLogOut}>LOGOUT</Button>
+                      </div>) : 
+                     (<Button className='rounded-full w-40 bg-or text-white hover:bg-white hover:text-or' onClick={handleLogOut}>LOGOUT</Button>)
+                      
                   }
                 </div>
 

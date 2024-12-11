@@ -91,7 +91,7 @@ const page = () => {
         <img src="/event2.jpg" className="h-full object-cover"/>
       </div>
       <div className='w-3/5 p-10 text-center text-white'>
-        <img src="/Logo.png" className="w-16 float-end" />
+        <a href="/"><img src="/Logo.png" className="w-16 float-end" /></a>
         <h1 className='text-6xl text-or font-bold tracking-wider mt-32'>REGISTER NOW</h1>
 
         <div className='mt-8'>

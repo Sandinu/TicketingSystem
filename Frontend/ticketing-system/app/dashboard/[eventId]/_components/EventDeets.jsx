@@ -19,8 +19,8 @@ const EventDeets = ({event}) => {
     //     "eventStartTime": "13:40:23",
     //     "eventLocation": "Test"}
   return (
-    <div>
-      <div className=' relative align-middle text-center justify-center'>
+    <div className='h-full my-2'>
+      <div className=' relative h-full align-middle text-center justify-center'>
         <div className='w-[90%] bg-or h-70 z-0 absolute top-0 block m-auto right-0 left-0 rounded-xl h-12'></div>
             <div className='w-full h-50 bg-blight py-8 z-10 absolute top-5 rounded-xl align-middle justify-center border'>
                 <div className=''>

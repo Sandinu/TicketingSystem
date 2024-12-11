@@ -54,7 +54,9 @@ const page = () => {
       console.log('Updated user:', user);
       if(user.roles == 'ROLE_VENDOR'){
         window.location.href = '/vendor-profile';
-      }
+      }else (
+        window.location.href = '/'
+      )
     }
   }, [user]);
 
@@ -62,7 +64,7 @@ const page = () => {
   return (
     <div className='flex flex-row h-screen'>
       <div className='w-3/5 p-10 text-center text-white'>
-        <img src="/Logo.png" className="w-16" />
+        <a href="/"><img src="/Logo.png" className="w-16" /></a>
         <h1 className='text-6xl text-or font-bold tracking-wider mt-20'>LOGIN</h1>
 
         <div className='mt-14 w-full flex flex-col items-center'>
