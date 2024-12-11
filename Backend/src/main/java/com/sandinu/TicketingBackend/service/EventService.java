@@ -50,18 +50,12 @@ public class EventService {
 
 
 
-    public Event createEvent(String name, String description, int maxCapacity, int totalTickets, int customerRetrievalRate, int ticketReleaseRate, LocalDate eventDate, LocalTime eventStartTime, String eventLocation){
+    public Event createEvent(String name, String description, int maxCapacity, int totalTickets, int customerRetrievalRate, int ticketReleaseRate, LocalDate eventDate, LocalTime eventStartTime, String eventLocation, String eventImageUrl, String vendorId){
 //        if (totalTickets > maxCapacity) {
 //            throw new IllegalArgumentException("Total tickets cannot exceed the maximum capacity!");
 //        }
-        Vendor vendor;
-        UserDeets userDeets = (UserDeets) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (userDeets.getRoles().equals("ROLE_VENDOR")){
-            vendor = vendorService.findVendorById(userDeets.getId());
-        }else {
-            throw new RuntimeException("Only vendors can create events");
-        }
+        Vendor vendor = vendorService.findVendorById(vendorId);
 
         Event event = new Event();
         event.setEventName(name);
@@ -74,6 +68,7 @@ public class EventService {
         event.setEventStartTime(eventStartTime);
         event.setEventLocation(eventLocation);
         event.getVendorId().add(vendor);
+        event.setEventImageUrl(eventImageUrl);
 
         Event eventSaved = eventRepo.save(event);
 

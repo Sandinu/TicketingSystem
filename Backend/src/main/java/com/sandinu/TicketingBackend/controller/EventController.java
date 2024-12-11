@@ -34,18 +34,10 @@ public class EventController {
     //Create new event
     @PostMapping("/create")
     public ResponseEntity<Event> createEvent(
-            @RequestParam String name,
-            @RequestParam String description,
-            @RequestParam int maxCapacity,
-            @RequestParam int totalTickets,
-            @RequestParam int customerRetrievalRate,
-            @RequestParam int ticketReleaseRate,
-            @RequestParam LocalDate eventDate,
-            @RequestParam LocalTime eventStartTime,
-            @RequestParam String eventLocation)
-
+            @RequestBody CreateEventDTO createEventDTO
+            )
             {
-                Event event = eventService.createEvent(name, description, maxCapacity, totalTickets, customerRetrievalRate, ticketReleaseRate, eventDate, eventStartTime, eventLocation);
+                Event event = eventService.createEvent(createEventDTO.getName(), createEventDTO.getDescription(), createEventDTO.getMaxCapacity(), createEventDTO.getTotalTickets(), createEventDTO.getCustomerRetrievalRate(),createEventDTO.getTicketReleaseRate(), createEventDTO.getEventDate(), createEventDTO.getEventStartTime(), createEventDTO.getEventLocation(),createEventDTO.getEventImageUrl(),createEventDTO.getVendorId());
                 return ResponseEntity.ok(event);
             }
 

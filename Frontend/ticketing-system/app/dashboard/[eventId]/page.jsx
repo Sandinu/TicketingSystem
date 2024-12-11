@@ -294,7 +294,7 @@ const Dashboard = ({params}) => {
         <div className='px-10 py-3'>
             <DashNav/>
             <div className='flex gap-8 flex-row mt-4'>
-                <div className='w-1/4'><EventPost/></div>
+                <div className='w-1/4'><EventPost imgsrc={event.eventImageUrl}/></div>
                 <div className='w-3/4 flex-col gap-5'>
                     <div className='h-3/4'>
                         <EventDeets event={event}/>
