@@ -1,12 +1,11 @@
-import { Avatar } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { UserContext } from '@/UserContext'
-import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import Link from 'next/link'
 import React, { useContext } from 'react'
 
 const DashNav = () => {
   const {user, setUser} = useContext(UserContext);
+  
   const handleLogOut = async () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/logout`, {

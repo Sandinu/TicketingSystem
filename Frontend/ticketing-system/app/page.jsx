@@ -28,9 +28,15 @@ export default function Home() {
       } catch (error) {
           //console.error('Error fetching event:', error);
       } finally {
+
           setLoading(false);
       }
   };
+  if (loading) {
+    return <div>
+        <img src="/loader.gif" className="fixed left-0 right-0 bottom-0 top-0 m-auto w-32"/>
+    </div>
+}
 
   return (
     <div className="relative px-10 pt-5 justify-center text-center  overflow-hidden">

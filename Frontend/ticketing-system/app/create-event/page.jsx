@@ -25,7 +25,9 @@ const page = () => {
     const [customerRetrievalRate, setCustomerRetrievalRate] = useState('');
     const [ticketReleaseRate, setTicketReleaseRate] = useState('');
     const [eventStartTime, setEventStartTime] = useState('');
-    const [eventLocation, setEventLocation] = useState('');             
+    const [eventLocation, setEventLocation] = useState('');      
+    const [loading, setLoading] = useState(false);
+       
     
 
     const handleDateChange = (newDate) => {
@@ -122,6 +124,12 @@ const page = () => {
         </div>
     }
 
+    if (loading) {
+      return <div>
+          <img src="/loader.gif" className="fixed left-0 right-0 bottom-0 top-0 m-auto w-32"/>
+      </div>
+  }
+
     
   return (
     <div className='px-10 pt-5'><DashNav/>
@@ -141,22 +149,22 @@ const page = () => {
 
                 <div className="w-2/5 flex flex-col items-center">
                     <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Max Capacity*</Label>
-                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' id="maxCapacity" placeholder='Max Capacity' onChange={(e) => setMaxCapacity(e.target.value)} required></Input>
+                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' type='number' id="maxCapacity" placeholder='Max Capacity' onChange={(e) => setMaxCapacity(e.target.value)} required></Input>
                 </div>
 
                 <div className="w-2/5 flex flex-col items-center">
                     <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Total Tickets*</Label>
-                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' id="maxCapacity" placeholder='Total Tickets' onChange={(e) => setTotalTickets(e.target.value)} required></Input>
+                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' type='number' id="maxCapacity" placeholder='Total Tickets' onChange={(e) => setTotalTickets(e.target.value)} required></Input>
                 </div>
 
                 <div className="w-2/5 flex flex-col items-center">
                     <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Customer Retrieval Rate*</Label>
-                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' id="maxCapacity" placeholder='Customer Retrieval Rate' onChange={(e) => setCustomerRetrievalRate(e.target.value)} required></Input>
+                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' type='number' id="maxCapacity" placeholder='Customer Retrieval Rate' onChange={(e) => setCustomerRetrievalRate(e.target.value)} required></Input>
                 </div>
 
                 <div className="w-2/5 flex flex-col items-center">
                     <Label htmlFor='maxCapacity' className="text-gray-300 mb-3">Ticket Release Rate*</Label>
-                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' id="maxCapacity" placeholder='Ticket Release Rate' onChange={(e) => setTicketReleaseRate(e.target.value)} required></Input>
+                    <Input className='bg-blight text-white border-none h-12 w-full rounded-full text-center mb-8' type='number' id="maxCapacity" placeholder='Ticket Release Rate' onChange={(e) => setTicketReleaseRate(e.target.value)} required></Input>
                 </div>
 
                 <div className="w-2/5 flex flex-col items-center">
