@@ -98,11 +98,11 @@ This project makes use of multithreading to simulate multiple users interacting 
 The application provides real-time updates for ticket transactions using WebSockets, enabling vendors and customers to see live updates on ticket availability and sales statistics.
 
 
-![Logo](/fron)
+![Logo](/Frontend/ticketing-system/public/Logo.png)
 
 
 ## 🔗 Links
 
-[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/)
+[![linkedin]([https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white](https://www.linkedin.com/in/sandinu-pinnawala-b85b2b20a/))](https://www.linkedin.com/)
 
 
