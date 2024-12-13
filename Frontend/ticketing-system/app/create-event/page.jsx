@@ -35,7 +35,7 @@ const page = () => {
       };
 
       const handleCreateEvent = async () => {
-        if(user.roles != "ROLE_VENDOR"){
+        if(!user || user.roles != "ROLE_VENDOR"){
           toast({
             variant: "destructive",
             title: 'Unauthorized Access',
