@@ -22,7 +22,7 @@ const SimulationPanel = ({eventid}) => {
 
     const handleStartClick = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/events/sim', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/sim`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ const SimulationPanel = ({eventid}) => {
 
     const handleStopClick = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/events/sim-stop', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/sim-stop`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ const SimulationPanel = ({eventid}) => {
 
     const handleResetClick = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/events/sim-reset', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/sim-reset`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -88,7 +88,7 @@ const SimulationPanel = ({eventid}) => {
 
     const handleVipCustomerRequest = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/events/vip', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/vip`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ const SimulationPanel = ({eventid}) => {
       }
 
       try {
-        const response = await fetch(`http://localhost:8080/api/events/${eventid}/add-tickets`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${eventid}/add-tickets`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -169,7 +169,7 @@ const SimulationPanel = ({eventid}) => {
       }
 
       try {
-        const response = await fetch(`http://localhost:8080/api/events/${eventid}/purchase-tickets-admin`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${eventid}/purchase-tickets-admin`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -195,7 +195,7 @@ const SimulationPanel = ({eventid}) => {
 
     const handleAddVendors = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/events/add-vendor", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/add-vendor`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -221,7 +221,7 @@ const SimulationPanel = ({eventid}) => {
 
     const handleAddCustomer = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/events/add-customer", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/add-customer`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -250,9 +250,9 @@ const SimulationPanel = ({eventid}) => {
       <div className="w-full justify-center flex gap-5">
             {!simRunning?
             <Button className='w-1/6 py-6 rounded-full bg-bdark hover:bg-blight' onClick={handleStartClick}>START</Button>
-            : <Button className='w-1/6 py-6 rounded-full bg-bdark hover:bg-blight' onClick={handleStopClick}>STOP</Button>
+            : <Button className='w-1/6 py-6 rounded-full bg-bdark hover:bg-blight' onClick={handleStopClick}>PAUSE</Button>
             }
-          <Button className='w-1/6 py-6 rounded-full bg-bdark hover:bg-blight' onClick={handleStopClick}>PAUSE</Button>
+          <Button className='w-1/6 py-6 rounded-full bg-bdark hover:bg-blight' onClick={handleStopClick}>STOP</Button>
           <Button className='w-1/6 py-6 rounded-full bg-bdark hover:bg-blight' onClick={handleResetClick}>RESET</Button>
       </div>
       <div className="w-full justify-center flex gap-5 mt-5 uppercase">

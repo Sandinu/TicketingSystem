@@ -99,7 +99,7 @@ const Dashboard = ({params}) => {
     //     fetchEvent(eventId);
     // }, []);
 
-    const {messages, connectionStatus} = useEventWebSocket('ws://localhost:8080/ws/event-stats')
+    const {messages, connectionStatus} = useEventWebSocket('ws://ec2-16-171-162-202.eu-north-1.compute.amazonaws.com:8080/ws/event-stats')
 
     useEffect(() => {
         if (messages.length > 0) {
@@ -136,7 +136,7 @@ const Dashboard = ({params}) => {
     //gets the csv format from the backend and create the file and download it
     const handleLogDownload = async () => {
         try {
-          const response = await fetch('http://localhost:8080/api/events/ticket-logs', {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/ticket-logs`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -174,7 +174,7 @@ const Dashboard = ({params}) => {
         }
 
         try {
-          const response = await fetch('http://localhost:8080/api/events/config-update', {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/config-update`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -218,7 +218,7 @@ const Dashboard = ({params}) => {
         }
   
         try {
-          const response = await fetch(`http://localhost:8080/api/events/${event.eventId}/add-tickets`, {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${event.eventId}/add-tickets`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -248,7 +248,7 @@ const Dashboard = ({params}) => {
 
       const handleEventDeets = async () => {
         try {
-          const response = await fetch('http://localhost:8080/api/events/event-update', {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/event-update`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
