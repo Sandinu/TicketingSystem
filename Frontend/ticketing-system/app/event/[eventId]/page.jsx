@@ -68,12 +68,13 @@ const page = ({params}) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/events/${eventid}/purchase-tickets-admin`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${event.eventId}/purchase-tickets-admin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ticketCount: ticketsToBuy , cusotmerId: "AdminVendor"}),
+        body: JSON.stringify({ ticketCount: ticketsToBuy , cusotmerId: "AdminVendor"},),
+        //mode: 'no-cors',
       });
 
       if (!response.ok) {
@@ -91,7 +92,6 @@ const page = ({params}) => {
         title: 'Tickets Purchased!',
         description: 'Tickets Purchased successfully',
       })
-      setTicketBuyDialog(false);
     } catch (error) {
       console.log('Error starting simulation:', error);
       toast({
