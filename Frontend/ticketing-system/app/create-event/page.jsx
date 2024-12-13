@@ -117,7 +117,7 @@ const page = () => {
       };
 
       
-      if(user.roles == "ROLE_CUSTOMER"){
+      if(!user || user.roles == "ROLE_CUSTOMER"){
         return <div className='text-center justify-center pt-10'>
             <h1 className="text-white text-6xl font-semibold text-center mt-10 mb-5">Unauthorized Access</h1>
             <Button className="bg-or rounded-full text-white hover:bg-white hover:text-or">BACK TO HOME PAGE</Button>
