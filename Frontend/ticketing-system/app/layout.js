@@ -1,6 +1,8 @@
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import { UserProvider } from './../UserContext';
+import {Analytics} from "@vercel/analytics/next"
+
 
 export const metadata = {
   title: "BOOK IT | Find, Book, and Enjoy – It’s That Simple!",
@@ -15,6 +17,7 @@ export default function RootLayout({ children }) {
       >
         <UserProvider>
         {children}
+        <Analytics/>
         <Toaster/>
         </UserProvider>
       </body>
