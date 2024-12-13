@@ -99,7 +99,7 @@ const Dashboard = ({params}) => {
     //     fetchEvent(eventId);
     // }, []);
 
-    const {messages, connectionStatus} = useEventWebSocket('ws://ec2-16-171-162-202.eu-north-1.compute.amazonaws.com:8080/ws/event-stats')
+    const {messages, connectionStatus} = useEventWebSocket('ws://ticketing-system-sp-c52b1ee3dbb7.herokuapp.com/ws/event-stats')
 
     useEffect(() => {
         if (messages.length > 0) {
